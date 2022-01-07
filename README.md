@@ -25,6 +25,6 @@ api-skeleton
 ├── DockerFile
 ├── storage
 ├── makefile
-├── env.ini
+├── env.yaml
 └── test 
 ~~~
