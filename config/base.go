@@ -7,13 +7,7 @@ import (
 	"os"
 )
 
-type Config interface {
-	GetConfig() map[string]interface{}
-}
-
-type InitConfig struct {
-	conf map[string]interface{}
-}
+var InitConfig = new(System)
 
 func init() {
 	dir, _ := os.Getwd()
@@ -21,9 +15,7 @@ func init() {
 	if err != nil {
 		log.Panic(err)
 	}
-	var initConfig InitConfig
-	initConfig.conf = make(map[string]interface{})
-	err = yaml.Unmarshal(file, initConfig.conf)
+	err = yaml.Unmarshal(file, InitConfig)
 
 	if err != nil {
 		return

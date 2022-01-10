@@ -18,6 +18,7 @@ api-skeleton
 │   ├── Listener
 │   ├── Util
 │   └── Service
+├── bootstrap
 ├── config
 ├── database
 ├── routes

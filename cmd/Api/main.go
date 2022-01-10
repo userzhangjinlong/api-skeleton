@@ -6,7 +6,5 @@ import (
 )
 
 func main() {
-	configClass := config.InitConfig{}
-	conf := configClass.GetConfig()
-	fmt.Println(conf)
+	fmt.Println(config.InitConfig.App.Debug)
 }
