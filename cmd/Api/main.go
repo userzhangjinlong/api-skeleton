@@ -1,10 +1,11 @@
 package main
 
 import (
-	"api-skeleton/config"
-	"fmt"
+	app "api-skeleton/bootstrap"
 )
 
+var App *app.Server
+
 func main() {
-	fmt.Println(config.InitConfig.App.Debug)
+	App.Start()
 }
