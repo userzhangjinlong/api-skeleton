@@ -34,5 +34,6 @@ type Log struct {
 }
 
 type Proxy struct {
-	Port string `mapstructure:"port" json:"port" ini:"port"`
+	Port       string `mapstructure:"port" json:"port" ini:"port"`
+	TrustProxy string `mapstructure:"trustProxy" json:"trustProxy" ini:"trustProxy"`
 }
