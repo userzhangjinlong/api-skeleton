@@ -9,6 +9,7 @@ api-skeleton
 │   ├── Console
 │   ├── Enum
 │   ├── Ecode
+│   ├── ConstDir
 │   ├── Http
 │   │	├── Controller
 │   │	├── Middleware
@@ -28,4 +29,10 @@ api-skeleton
 ├── makefile
 ├── env.yaml
 └── test 
+~~~
+
+- 常用组件工具
+~~~
+    1.生成表结构struct
+    go run cmd/Cli/main.go sql struct --db=库名称 --table=表名称
 ~~~

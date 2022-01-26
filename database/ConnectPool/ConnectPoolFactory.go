@@ -1,7 +1,9 @@
 package ConnectPoolFactory
 
 import (
+	"api-skeleton/app/ConstDir"
 	"api-skeleton/config"
+	"fmt"
 	"github.com/garyburd/redigo/redis"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -27,11 +29,14 @@ var (
 )
 
 type ConnectPool struct {
+	library string
 }
 
 func (this *ConnectPool) GetInstance() *ConnectPool {
 	once.Do(func() {
-		instance = &ConnectPool{}
+		instance = &ConnectPool{
+			library: this.library,
+		}
 	})
 
 	return instance
@@ -41,13 +46,7 @@ func (this *ConnectPool) InitConnectPool() (result bool) {
 	var configs = config.InitConfig
 	switch dbType {
 	case "mysql":
-		source := configs.Database.Username +
-			":" + configs.Database.Password +
-			"@tcp(" + configs.Database.Host + ":" +
-			configs.Database.Port +
-			")/" + configs.Database.Name +
-			"?charset=" + configs.Database.Charset +
-			"&parseTime=True&loc=Local&timeout=1000ms"
+		source := getDbLibrary(this.library)
 		db, errDb = gorm.Open("mysql", source)
 		if errDb != nil {
 			log.Fatal(errDb.Error())
@@ -55,8 +54,9 @@ func (this *ConnectPool) InitConnectPool() (result bool) {
 		}
 		//默认表名加s配置去掉
 		db.SingularTable(true)
-		//关闭数据库连接，db会自动被多个goroutine共享，可以不调用
-		defer db.Close()
+		//关闭数据库连接，db会自动被多个goroutine共享，可以不调用 db貌似不能关闭需要保持长链接？？
+		//todo::判断处理db是否需要关闭后期优化
+		//defer db.Close()
 		log.Println("mysql:初始化连接成功")
 	case "redis":
 		var redisAddress = configs.Redis.Root + ":" + configs.Redis.Port
@@ -89,7 +89,38 @@ func (this *ConnectPool) GetConnectLibrary() (res interface{}, err error) {
 	}
 }
 
-func NewConnect(connect string) *ConnectPool {
+func NewConnect(connect string, library string) *ConnectPool {
 	dbType = connect
-	return &ConnectPool{}
+	return &ConnectPool{
+		library: library,
+	}
+}
+
+func getDbLibrary(library string) string {
+	var source string
+	switch library {
+	case ConstDir.DEFAULT:
+		source = configs.Database.Username +
+			":" + configs.Database.Password +
+			"@tcp(" + configs.Database.Host + ":" +
+			configs.Database.Port +
+			")/" + configs.Database.Name
+	case ConstDir.SCHEMA:
+		source = configs.Database.UsernameSchema +
+			":" + configs.Database.PasswordSchema +
+			"@tcp(" + configs.Database.HostSchema + ":" +
+			configs.Database.PortSchema +
+			")/" + configs.Database.NameSchema
+	default:
+		source = configs.Database.Username +
+			":" + configs.Database.Password +
+			"@tcp(" + configs.Database.Host + ":" +
+			configs.Database.Port +
+			")/" + configs.Database.Name
+	}
+
+	source += "?charset=" + configs.Database.Charset +
+		"&parseTime=True&loc=Local&timeout=1000ms"
+	fmt.Println(source)
+	return source
 }

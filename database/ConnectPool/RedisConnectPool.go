@@ -17,7 +17,7 @@ func NewRedis(db ...int) (result bool) {
 			redisDb, _ = strconv.Atoi(configs.Redis.Db)
 		}
 	}
-	result = NewConnect("redis").GetInstance().InitConnectPool()
+	result = NewConnect("redis", "").GetInstance().InitConnectPool()
 
 	return result
 }
@@ -25,7 +25,7 @@ func NewRedis(db ...int) (result bool) {
 //SelectDb redis工厂选择加载的redis库
 func SelectDb(db int) (result bool) {
 	redisDb = db
-	result = NewConnect("redis").GetInstance().InitConnectPool()
+	result = NewConnect("redis", "").GetInstance().InitConnectPool()
 
 	return result
 }
@@ -35,7 +35,7 @@ func GetRedis() (redisPool *redis.Pool, err error) {
 	if !NewRedis() {
 		panic("redis链接异常")
 	}
-	redisConnect, errRedis := NewConnect("redis").GetInstance().GetConnectLibrary()
+	redisConnect, errRedis := NewConnect("redis", "").GetInstance().GetConnectLibrary()
 
 	return redisConnect.(*redis.Pool), errRedis
 }

@@ -1,13 +1,17 @@
 package MysqlCommand
 
 import (
+	"api-skeleton/app/ConstDir"
 	ConnectPoolFactory "api-skeleton/database/ConnectPool"
+	"fmt"
+	"github.com/jinzhu/gorm"
 )
 
 type DBModel struct {
 }
 
 type TableColumn struct {
+	gorm.Model
 	ColumnName    string
 	DataType      string
 	IsNullable    string
@@ -30,19 +34,23 @@ var DBTypeToStructType = map[string]string{
 	"char":      "string",
 }
 
-func (m *DBModel) GetColumns(dbName string, tableName string) []*TableColumn {
+func (m *DBModel) GetColumns(dbName, tableName string) []*TableColumn {
 
-	var results *TableColumn
+	var results []*TableColumn
 	query := "SELECT COLUMN_NAME, DATA_TYPE, COLUMN_KEY, IS_NULLABLE, COLUMN_TYPE, COLUMN_COMMENT " +
 		"FROM COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?"
-	db, err := ConnectPoolFactory.GetMysql()
+	if dbName == "" {
+		dbName = ConstDir.SCHEMA
+	}
+
+	db, err := ConnectPoolFactory.GetMysql(dbName)
 	if err != nil {
 		panic("db链接获取异常")
 	}
 
-	db.Raw(query, dbName, tableName).Scan(&tableName)
+	err = db.Raw(query, dbName, tableName).Scan(&results).Error
 
-	tableColum := make([]*TableColumn, 0)
-	tableColum = append(tableColum, results)
-	return tableColum
+	fmt.Println(results)
+
+	return results
 }

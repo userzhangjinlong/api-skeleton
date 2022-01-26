@@ -13,12 +13,19 @@ type App struct {
 }
 
 type Database struct {
-	Charset  string `mapstructure:"charset" json:"charset" ini:"charset"`
+	Charset string `mapstructure:"charset" json:"charset" ini:"charset"`
+	//默认Default库
 	Host     string `mapstructure:"host" json:"host" ini:"host"`
 	Port     string `mapstructure:"port" json:"port" ini:"port"`
 	Name     string `mapstructure:"name" json:"name" ini:"name"`
 	Username string `mapstructure:"username" json:"username" ini:"username"`
 	Password string `mapstructure:"password" json:"password" ini:"password"`
+	//information_schema库
+	HostSchema     string `mapstructure:"hostschema" json:"hostschema" ini:"hostschema"`
+	PortSchema     string `mapstructure:"portschema" json:"portschema" ini:"portschema"`
+	NameSchema     string `mapstructure:"nameschema" json:"nameschema" ini:"nameschema"`
+	UsernameSchema string `mapstructure:"usernameschema" json:"usernameschema" ini:"usernameschema"`
+	PasswordSchema string `mapstructure:"passwordschema" json:"passwordschema" ini:"passwordschema"`
 }
 
 type Redis struct {
