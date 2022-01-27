@@ -4,20 +4,18 @@ import (
 	"api-skeleton/app/ConstDir"
 	ConnectPoolFactory "api-skeleton/database/ConnectPool"
 	"fmt"
-	"github.com/jinzhu/gorm"
 )
 
 type DBModel struct {
 }
 
 type TableColumn struct {
-	gorm.Model
-	ColumnName    string
-	DataType      string
-	IsNullable    string
-	ColumnKey     string
-	ColumnType    string
-	ColumnComment string
+	ColumnName    string `gorm:"column:COLUMN_NAME"`
+	DataType      string `gorm:"column:DATA_TYPE"`
+	IsNullable    string `gorm:"column:IS_NULLABLE"`
+	ColumnKey     string `gorm:"column:COLUMN_KEY"`
+	ColumnType    string `gorm:"column:COLUMN_TYPE"`
+	ColumnComment string `gorm:"column:COLUMN_COMMENT"`
 }
 
 var DBTypeToStructType = map[string]string{
@@ -34,8 +32,7 @@ var DBTypeToStructType = map[string]string{
 	"char":      "string",
 }
 
-func (m *DBModel) GetColumns(dbName, tableName string) []*TableColumn {
-
+func (m *DBModel) GetColumns(dbName, tableSchema string, tableName string) []*TableColumn {
 	var results []*TableColumn
 	query := "SELECT COLUMN_NAME, DATA_TYPE, COLUMN_KEY, IS_NULLABLE, COLUMN_TYPE, COLUMN_COMMENT " +
 		"FROM COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?"
@@ -48,9 +45,11 @@ func (m *DBModel) GetColumns(dbName, tableName string) []*TableColumn {
 		panic("db链接获取异常")
 	}
 
-	err = db.Raw(query, dbName, tableName).Scan(&results).Error
+	fmt.Println("mysqlgo的链接db：", db)
+	err = db.Raw(query, tableSchema, tableName).Scan(&results).Error
 
-	fmt.Println(results)
+	fmt.Println("results结果", results)
+	fmt.Println("异常信息：", err)
 
 	return results
 }

@@ -7,13 +7,14 @@ import (
 	"text/template"
 )
 
-const databaseTpl = `type {{.TableName | ToCamelCase}} struct {
- {{range.Columns}} {{$length := len.Comment}} {{if gt $length 0}} 
-//{{.commient}} {{else}} // {{.name}} {{end}}
-	{{$typeLen := len.Type}} {{ if gt $typeLen 0}}{{.name | ToCameCase}}
+const databaseTpl = `type {{.TableName | index}} struct {
+ {{range.Column}} {{$length := len.Comment}} {{if gt $length 0}} 
+//{{.comment}} {{else}} // {{.name}} {{ end }}
+	{{$typeLen := len.Type}} {{ if gt $typeLen 0}}{{.name | index}}
+	{{.Type}} {{.Tag}} {{else}} {{.Name}} {{end}}
 {{end}}
 
-func (model {{.TableName | ToCameCase}}) TableName() string {
+func (model {{.TableName | index}}) TableName() string {
 	return "{{.TableName}}"
 }`
 
@@ -59,17 +60,20 @@ func (db *DatabaseTemplate) AssemblyColumns(tbColumns []*TableColumn) []*Databas
 
 //Generate 处理渲染模板内容
 func (db *DatabaseTemplate) Generate(tableName string, tplColumns []*DatabaseColumn) error {
-	tpl := template.Must(template.New("MysqlCommand").Funcs(template.FuncMap{
-		"ToCamelCase": Util.UnderscoreToUpperCamelCase,
+	tpl := template.Must(template.New("").Funcs(template.FuncMap{
+		"index": Util.UnderscoreToUpperCamelCase,
 	}).Parse(db.databaseTpl))
-
+	//tpl, err := template.New("").Funcs(template.FuncMap{
+	//	"ToCamelCase": Util.UnderscoreToUpperCamelCase,
+	//}).ParseFiles("User.go")
+	//fmt.Println("err:", err)
 	tplDB := StructTemplateDB{
 		TableName: tableName,
 		Column:    tplColumns,
 	}
 
 	err := tpl.Execute(os.Stdout, tplDB)
-
+	//err = tpl.ExecuteTemplate(os.Stdout, "User.go", tplDB)
 	if err != nil {
 		return err
 	}

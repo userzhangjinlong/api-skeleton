@@ -52,8 +52,7 @@ func (this *ConnectPool) InitConnectPool() (result bool) {
 			log.Fatal(errDb.Error())
 			return false
 		}
-		//默认表名加s配置去掉
-		db.SingularTable(true)
+		fmt.Println("ConnectPool链接db：", db)
 		//关闭数据库连接，db会自动被多个goroutine共享，可以不调用 db貌似不能关闭需要保持长链接？？
 		//todo::判断处理db是否需要关闭后期优化
 		//defer db.Close()
