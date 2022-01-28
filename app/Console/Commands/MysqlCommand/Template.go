@@ -2,19 +2,22 @@ package MysqlCommand
 
 import (
 	"api-skeleton/app/Util"
+	"bytes"
 	"fmt"
 	"os"
 	"text/template"
 )
 
-const databaseTpl = `type {{.TableName | index}} struct {
- {{range.Column}} {{$length := len.Comment}} {{if gt $length 0}} 
-//{{.comment}} {{else}} // {{.name}} {{ end }}
-	{{$typeLen := len.Type}} {{ if gt $typeLen 0}}{{.name | index}}
-	{{.Type}} {{.Tag}} {{else}} {{.Name}} {{end}}
-{{end}}
+const databaseTpl = `package Model
 
-func (model {{.TableName | index}}) TableName() string {
+type {{.TableName | index}} struct {
+ {{range.Column}} {{$length := len .Comment}} {{if gt $length 0}}
+	//{{.Comment}}  {{else}} // {{.Name}} {{ end }}
+	{{$typeLen := len .Type}} {{ if gt $typeLen 0}}{{.Name | index}} {{.Type}} {{.Tag}} {{else}} {{.Name}} {{end}}
+{{end}}
+}
+
+func (model *{{.TableName | index}}) TableName() string {
 	return "{{.TableName}}"
 }`
 
@@ -46,7 +49,7 @@ func (db *DatabaseTemplate) AssemblyColumns(tbColumns []*TableColumn) []*Databas
 	tplColumns := make([]*DatabaseColumn, 0, len(tbColumns))
 
 	for _, column := range tbColumns {
-		tag := fmt.Sprintf("`"+"json:"+"\"%s\""+"`", column.ColumnName)
+		tag := fmt.Sprintf("`"+"gorm:"+"\"%s\""+" "+"json:"+"\"%s\""+"`", column.ColumnName, column.ColumnName)
 		tplColumns = append(tplColumns, &DatabaseColumn{
 			Name:    column.ColumnName,
 			Type:    DBTypeToStructType[column.DataType],
@@ -60,23 +63,37 @@ func (db *DatabaseTemplate) AssemblyColumns(tbColumns []*TableColumn) []*Databas
 
 //Generate 处理渲染模板内容
 func (db *DatabaseTemplate) Generate(tableName string, tplColumns []*DatabaseColumn) error {
-	tpl := template.Must(template.New("").Funcs(template.FuncMap{
+	tpl := template.Must(template.New("MysqlCommand").Funcs(template.FuncMap{
 		"index": Util.UnderscoreToUpperCamelCase,
 	}).Parse(db.databaseTpl))
-	//tpl, err := template.New("").Funcs(template.FuncMap{
-	//	"ToCamelCase": Util.UnderscoreToUpperCamelCase,
-	//}).ParseFiles("User.go")
-	//fmt.Println("err:", err)
+
 	tplDB := StructTemplateDB{
 		TableName: tableName,
 		Column:    tplColumns,
 	}
 
-	err := tpl.Execute(os.Stdout, tplDB)
-	//err = tpl.ExecuteTemplate(os.Stdout, "User.go", tplDB)
+	buf := new(bytes.Buffer)
+	err := tpl.Execute(buf, tplDB)
+
 	if err != nil {
 		return err
 	}
+	putStringInFile(Util.UnderscoreToUpperCamelCase(tableName), buf.String())
+
+	return nil
+}
+
+//putInFile 将写入buff池内的内容写入指定文件
+func putStringInFile(fileName string, bufString string) error {
+	file, err := os.OpenFile("app/Model/"+fileName+".go", os.O_CREATE|os.O_WRONLY, 0664)
+
+	if err != nil {
+		fmt.Println("open file err", err)
+		return err
+	}
+
+	fmt.Fprintf(file, bufString)
+	file.Close()
 
 	return nil
 }
