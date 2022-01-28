@@ -33,6 +33,6 @@ api-skeleton
 
 - 常用组件工具
 ~~~
-    1.生成表结构struct
+    1.生成表结构model struct 到app/Model/表名称.go文件
     go run cmd/Cli/main.go sql struct --schema=库名称 --table=表名称
 ~~~
