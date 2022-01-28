@@ -2,7 +2,6 @@ package ConnectPoolFactory
 
 import (
 	"api-skeleton/app/ConstDir"
-	"api-skeleton/config"
 	"fmt"
 	"github.com/garyburd/redigo/redis"
 	"github.com/jinzhu/gorm"
@@ -43,7 +42,6 @@ func (this *ConnectPool) GetInstance() *ConnectPool {
 }
 
 func (this *ConnectPool) InitConnectPool() (result bool) {
-	var configs = config.InitConfig
 	switch dbType {
 	case "mysql":
 		source := getDbLibrary(this.library)
@@ -52,7 +50,13 @@ func (this *ConnectPool) InitConnectPool() (result bool) {
 			log.Fatal(errDb.Error())
 			return false
 		}
-		fmt.Println("ConnectPool链接db：", db)
+		db.SingularTable(true)
+		MaxIdleConns, _ := strconv.Atoi(configs.Database.MaxIdleConns)
+		MaxOpenConns, _ := strconv.Atoi(configs.Database.MaxOpenConns)
+		// SetMaxIdleConns 用于设置连接池中空闲连接的最大数量
+		db.DB().SetMaxIdleConns(MaxIdleConns)
+		// SetMaxOpenConns 设置打开数据库连接的最大数量。
+		db.DB().SetMaxOpenConns(MaxOpenConns)
 		//关闭数据库连接，db会自动被多个goroutine共享，可以不调用 db貌似不能关闭需要保持长链接？？
 		//todo::判断处理db是否需要关闭后期优化
 		//defer db.Close()

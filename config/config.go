@@ -13,7 +13,9 @@ type App struct {
 }
 
 type Database struct {
-	Charset string `mapstructure:"charset" json:"charset" ini:"charset"`
+	Charset      string `mapstructure:"charset" json:"charset" ini:"charset"`
+	MaxIdleConns string `mapstructure:"maxidleconns" json:"maxidleconns" ini:"maxidleconns"`
+	MaxOpenConns string `mapstructure:"maxopenconns" json:"maxopenconns" ini:"maxopenconns"`
 	//默认Default库
 	Host     string `mapstructure:"host" json:"host" ini:"host"`
 	Port     string `mapstructure:"port" json:"port" ini:"port"`
