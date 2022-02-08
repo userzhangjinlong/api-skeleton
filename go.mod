@@ -7,7 +7,9 @@ require (
 	github.com/gin-contrib/pprof v1.3.0
 	github.com/gin-gonic/gin v1.7.7
 	github.com/jinzhu/gorm v1.9.16
-	github.com/sirupsen/logrus v1.8.1 // indirect
+	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
+	github.com/lestrrat-go/strftime v1.0.5 // indirect
+	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/afero v1.8.0 // indirect
 	github.com/spf13/cobra v1.3.0
 	github.com/spf13/viper v1.10.1 // indirect

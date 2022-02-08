@@ -1,6 +1,8 @@
 package Api
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 type Index struct {
 }
