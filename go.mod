@@ -6,6 +6,7 @@ require (
 	github.com/garyburd/redigo v1.6.3
 	github.com/gin-contrib/pprof v1.3.0
 	github.com/gin-gonic/gin v1.7.7
+	github.com/go-playground/validator/v10 v10.10.0 // indirect
 	github.com/jinzhu/gorm v1.9.16
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/lestrrat-go/strftime v1.0.5 // indirect
