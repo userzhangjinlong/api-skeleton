@@ -19,13 +19,13 @@ func (i *Index) Index(ctx *gin.Context) {
 	}{}
 	valid, errs := Request.BindAndValid(ctx, &param)
 	if !valid {
-		fmt.Println(errs)
+		fmt.Printf("参数错误：%s", errs)
 		return
 	}
 	logrus.WithFields(logrus.Fields{
 		"code": 200,
 		"data": "success",
-	}).Info("测试日志写入")
+	}).Info("测试日志写入12")
 	ctx.JSON(200, gin.H{
 		"code": 200,
 		"msg":  "success",

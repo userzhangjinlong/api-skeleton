@@ -1,7 +1,6 @@
 package Request
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -37,7 +36,6 @@ func BindAndValid(ctx *gin.Context, v interface{}) (bool, ValidErrors) {
 	err := ctx.ShouldBind(v)
 	if err != nil {
 		v := ctx.Value("trans")
-		fmt.Printf("trans 是什么：%s", v)
 		trans, _ := v.(ut.Translator)
 		verrs, ok := err.(validator.ValidationErrors)
 		if !ok {

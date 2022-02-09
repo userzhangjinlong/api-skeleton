@@ -1,7 +1,6 @@
 package Middleware
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/locales/en"
@@ -14,12 +13,9 @@ import (
 
 //Translations 验证器全局翻译中间件新增
 func Translations() gin.HandlerFunc {
-	fmt.Println("456757")
-	fmt.Printf("locale 是什么 %s", "456757")
 	return func(ctx *gin.Context) {
 		uni := ut.New(en.New(), zh.New())
 		locale := ctx.GetHeader("locale")
-		fmt.Printf("locale 是什么 %s", locale)
 		trans, _ := uni.GetTranslator(locale)
 		v, ok := binding.Validator.Engine().(*validator.Validate)
 		if ok {
@@ -35,7 +31,6 @@ func Translations() gin.HandlerFunc {
 				break
 
 			}
-			fmt.Printf("中间件的trans是什么：%s", trans)
 			ctx.Set("trans", trans)
 		}
 		ctx.Next()

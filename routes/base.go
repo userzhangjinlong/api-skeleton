@@ -5,8 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterRoutes() *gin.Engine {
-	router := gin.Default()
+func RegisterRoutes(router *gin.Engine) *gin.Engine {
 	// 调试模式，开启 pprof 包，便于开发阶段分析程序性能
 	pprof.Register(router)
 
