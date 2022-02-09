@@ -19,8 +19,7 @@ func (s *Server) Start() {
 	engine := Route.RegisterRoutes()
 
 	//全局中间件注入
-	engine.Use(Middleware.Cors())
-	engine.Use(Middleware.Translations())
+	engine.Use(Middleware.Cors()).Use(Middleware.Translations())
 
 	//设置受信任代理,如果不设置默认信任所有代理，不安全
 	engine.SetTrustedProxies([]string{configs.Proxy.TrustProxy})
