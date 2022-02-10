@@ -1,6 +1,7 @@
 package Api
 
 import (
+	"api-skeleton/app/Util"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -24,9 +25,7 @@ func (i *Index) Index(ctx *gin.Context) {
 		"code": 200,
 		"data": "success",
 	}).Info("测试日志写入12")
-	ctx.JSON(200, gin.H{
-		"code": 200,
-		"msg":  "success",
+	Util.Success(ctx, map[string]string{
 		"data": "123124",
 	})
 }
