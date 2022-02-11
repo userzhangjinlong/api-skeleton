@@ -73,7 +73,8 @@ func (this *ConnectPool) InitConnectPool() (result bool) {
 			},
 		}
 
-		defer pool.Close()
+		//todo::判断处理redis是否需要关闭后期优化
+		//defer pool.Close()
 		log.Println("redis：实例化连接成功")
 
 	}

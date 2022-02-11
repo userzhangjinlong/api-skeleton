@@ -42,4 +42,5 @@ func init() {
 		rotatelogs.WithRotationTime(time.Hour*24),
 	)
 	logrus.SetOutput(writer)
+
 }

@@ -10,6 +10,7 @@ api-skeleton
 │   ├── Enum
 │   ├── Ecode
 │   ├── ConstDir
+│   ├── Global
 │   ├── Http
 │   │	├── Controller
 │   │	├── Middleware
