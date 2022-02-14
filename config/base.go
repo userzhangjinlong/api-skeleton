@@ -25,7 +25,9 @@ func init() {
 	}
 
 	//init logrus日志配置组件
-	logrus.SetFormatter(&logrus.JSONFormatter{})
+	logrus.SetFormatter(&logrus.JSONFormatter{
+		TimestampFormat: "2006-01-02 15:04:05.999999999",
+	})
 	filePath := dir + InitConfig.Log.Path
 	/* 日志轮转相关函数
 	`WithLinkName` 为最新的日志建立软连接

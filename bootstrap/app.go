@@ -27,6 +27,7 @@ func (s *Server) Start() {
 	//全局中间件注入
 	engine.Use(Middleware.Cors())
 	engine.Use(Middleware.Translations())
+	engine.Use(Middleware.AccessLog())
 
 	//注入路由
 	engine = Route.RegisterRoutes(engine)
