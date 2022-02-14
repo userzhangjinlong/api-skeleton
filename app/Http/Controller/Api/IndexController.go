@@ -3,6 +3,7 @@ package Api
 import (
 	"api-skeleton/app/Cache"
 	"api-skeleton/app/Util"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -23,7 +24,14 @@ func (i *Index) Index(ctx *gin.Context) {
 	//	return
 	//}
 	var cache Cache.BaseRedis
-	val, _ := cache.Get("test")
+	val, err := cache.HGet("user", "1")
+	if err != nil {
+		fmt.Println(err)
+	}
+	//val, err1 := cache.Get("test")
+	//if err1 != nil {
+	//	fmt.Println(err1)
+	//}
 	logrus.WithFields(logrus.Fields{
 		"code": 200,
 		"data": "success",
