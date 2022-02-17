@@ -3,7 +3,6 @@ package Api
 import (
 	"api-skeleton/app/Cache"
 	"api-skeleton/app/Util"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -24,10 +23,7 @@ func (i *Index) Index(ctx *gin.Context) {
 	//	return
 	//}
 	var cache Cache.BaseRedis
-	val, err := cache.HGet("user", "1")
-	if err != nil {
-		fmt.Println(err)
-	}
+	val, _ := cache.HGet("user", "1")
 	//val, err1 := cache.Get("test")
 	//if err1 != nil {
 	//	fmt.Println(err1)

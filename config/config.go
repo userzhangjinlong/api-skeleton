@@ -6,6 +6,7 @@ type System struct {
 	Redis    Redis    `json:"redis" ini:"redis"`
 	Log      Log      `json:"log" ini:"log"`
 	Proxy    Proxy    `json:"proxy" ini:"proxy"`
+	Trace    Trace    `json:"trace" ini:"trace"`
 }
 
 type App struct {
@@ -45,4 +46,10 @@ type Log struct {
 type Proxy struct {
 	Port       string `mapstructure:"port" json:"port" ini:"port"`
 	TrustProxy string `mapstructure:"trustProxy" json:"trustProxy" ini:"trustProxy"`
+}
+
+type Trace struct {
+	Servicename string `mapstructure:"servicename" json:"servicename" ini:"servicename"`
+	Agenthost   string `mapstructure:"agenthost" json:"agenthost" ini:"agenthost"`
+	Port        string `mapstructure:"port" json:"port" ini:"port"`
 }
