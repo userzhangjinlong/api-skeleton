@@ -32,7 +32,6 @@ func (s *Server) Start() {
 	engine.Use(Middleware.Tracing())
 	engine.Use(Middleware.Translations())
 	engine.Use(Middleware.AccessLog())
-	engine.Use(Middleware.Auth())
 
 	//注入路由
 	engine = Route.RegisterRoutes(engine)

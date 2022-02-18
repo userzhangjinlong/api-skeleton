@@ -2,6 +2,7 @@ package Route
 
 import (
 	"api-skeleton/app/Http/Controller/Api"
+	"api-skeleton/app/Http/Middleware"
 )
 
 const (
@@ -17,9 +18,10 @@ const (
 )
 
 type Route struct {
-	Method   string
-	Pattern  string
-	Callback interface{}
+	Method     string
+	Pattern    string
+	Callback   interface{}
+	Middleware interface{}
 }
 
 // 控制器注入
@@ -31,7 +33,7 @@ func setWebRoute() map[string][]Route {
 	//这里写入所有对应的路由插入
 	routes := map[string][]Route{
 		"v1": {
-			{MethodGet, "/index", IndexController.Index},
+			{MethodGet, "/index", IndexController.Index, Middleware.Auth()},
 		},
 	}
 

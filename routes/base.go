@@ -18,15 +18,39 @@ func RegisterRoutes(router *gin.Engine) *gin.Engine {
 				switch routes[i].Method {
 				case MethodGet:
 					//这里后续写增加回调方法的工厂方法调用指定位置的回调方法
-					group.GET(routes[i].Pattern, routes[i].Callback.(func(context *gin.Context)))
+					if routes[i].Middleware != nil {
+						group.Use(routes[i].Middleware.(gin.HandlerFunc)).GET(routes[i].Pattern, routes[i].Callback.(func(context *gin.Context)))
+					} else {
+						group.GET(routes[i].Pattern, routes[i].Callback.(func(context *gin.Context)))
+					}
 				case MethodPost:
-					group.POST(routes[i].Pattern, routes[i].Callback.(func(context *gin.Context)))
+					if routes[i].Middleware != nil {
+						group.Use(routes[i].Middleware.(gin.HandlerFunc)).
+							POST(routes[i].Pattern, routes[i].Callback.(func(context *gin.Context)))
+					} else {
+						group.POST(routes[i].Pattern, routes[i].Callback.(func(context *gin.Context)))
+					}
 				case MethodPut:
-					group.PUT(routes[i].Pattern, routes[i].Callback.(func(context *gin.Context)))
+					if routes[i].Middleware != nil {
+						group.Use(routes[i].Middleware.(gin.HandlerFunc)).
+							PUT(routes[i].Pattern, routes[i].Callback.(func(context *gin.Context)))
+					} else {
+						group.PUT(routes[i].Pattern, routes[i].Callback.(func(context *gin.Context)))
+					}
 				case MethodDelete:
-					group.DELETE(routes[i].Pattern, routes[i].Callback.(func(context *gin.Context)))
+					if routes[i].Middleware != nil {
+						group.Use(routes[i].Middleware.(gin.HandlerFunc)).
+							DELETE(routes[i].Pattern, routes[i].Callback.(func(context *gin.Context)))
+					} else {
+						group.DELETE(routes[i].Pattern, routes[i].Callback.(func(context *gin.Context)))
+					}
 				case MethodAny:
-					group.Any(routes[i].Pattern, routes[i].Callback.(func(context *gin.Context)))
+					if routes[i].Middleware != nil {
+						group.Use(routes[i].Middleware.(gin.HandlerFunc)).
+							Any(routes[i].Pattern, routes[i].Callback.(func(context *gin.Context)))
+					} else {
+						group.Any(routes[i].Pattern, routes[i].Callback.(func(context *gin.Context)))
+					}
 				}
 			}
 		}
