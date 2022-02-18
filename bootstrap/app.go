@@ -7,6 +7,7 @@ import (
 	"api-skeleton/config"
 	ConnectPoolFactory "api-skeleton/database/ConnectPool"
 	Route "api-skeleton/routes"
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -31,6 +32,7 @@ func (s *Server) Start() {
 	engine.Use(Middleware.Tracing())
 	engine.Use(Middleware.Translations())
 	engine.Use(Middleware.AccessLog())
+	engine.Use(Middleware.Auth())
 
 	//注入路由
 	engine = Route.RegisterRoutes(engine)
@@ -51,7 +53,7 @@ func initRedisClient() {
 func initTracer() {
 	jaegerTracer, _, err := Util.NewJaegerTracer(
 		configs.Trace.Servicename,
-		configs.Trace.Agenthost+configs.Trace.Port,
+		fmt.Sprintf("%s%s", configs.Trace.Agenthost, configs.Trace.Port),
 	)
 
 	if err != nil {

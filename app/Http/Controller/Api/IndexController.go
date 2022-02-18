@@ -28,9 +28,13 @@ func (i *Index) Index(ctx *gin.Context) {
 	//if err1 != nil {
 	//	fmt.Println(err1)
 	//}
+	traceId, _ := ctx.Get("X-Trace-ID")
+	spanId, _ := ctx.Get("X-Span-ID")
 	logrus.WithFields(logrus.Fields{
-		"code": 200,
-		"data": "success",
+		"code":     200,
+		"data":     "success",
+		"trace_id": traceId,
+		"span_id":  spanId,
 	}).Info("测试日志写入12")
 	Util.Success(ctx, map[string]string{
 		"data": val,

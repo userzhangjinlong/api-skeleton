@@ -34,12 +34,15 @@ func AccessLog() gin.HandlerFunc {
 		beginTime := time.Now().Unix()
 		ctx.Next()
 		endTime := time.Now().Unix()
+		traceID, _ := ctx.Get("X-Trace-ID")
+		spanID, _ := ctx.Get("X-Span-ID")
 		fields := logrus.Fields{
 			"request":  ctx.Request.PostForm,
 			"response": bodyWriter.body.String(),
 		}
 
-		s := "access log: Uri: %s, Host: %s, Ip: %s, Header: %s,method: %s, code: %d, begin_time: %d, end_time: %d"
+		s := "access log: Uri: %s, Host: %s, Ip: %s, Header: %s,method: %s, " +
+			"code: %d, begin_time: %d, end_time: %d, trace_id:%s, span_id:%s"
 		logrus.WithFields(fields).Infof(s,
 			ctx.Request.RequestURI,
 			ctx.Request.Host,
@@ -49,6 +52,8 @@ func AccessLog() gin.HandlerFunc {
 			bodyWriter.Status(),
 			beginTime,
 			endTime,
+			traceID,
+			spanID,
 		)
 	}
 }
