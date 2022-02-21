@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	"api-skeleton/app/ConstDir"
 	"api-skeleton/app/Global"
 	"api-skeleton/app/Http/Middleware"
 	"api-skeleton/app/Util"
@@ -21,6 +22,7 @@ func (s *Server) Start() {
 	//gin.SetMode(gin.ReleaseMode)
 
 	//初始化一些全局引擎
+	initDB()          //初始化DB
 	initRedisClient() //redis客户端
 	initTracer()      //全链路追踪
 
@@ -41,6 +43,14 @@ func (s *Server) Start() {
 
 	//启动引擎
 	engine.Run(configs.Proxy.Port)
+}
+
+func initDB() {
+	db, err := ConnectPoolFactory.GetMysql(ConstDir.DEFAULT)
+	if err != nil {
+		panic("db链接获取异常")
+	}
+	Global.DB = db
 }
 
 func initRedisClient() {

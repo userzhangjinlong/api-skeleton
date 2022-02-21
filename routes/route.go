@@ -27,6 +27,7 @@ type Route struct {
 // 控制器注入
 var (
 	IndexController Api.Index
+	LoginController Api.Login
 )
 
 func setWebRoute() map[string][]Route {
@@ -34,6 +35,9 @@ func setWebRoute() map[string][]Route {
 	routes := map[string][]Route{
 		"v1": {
 			{MethodGet, "/index", IndexController.Index, Middleware.Auth()},
+		},
+		"api": {
+			{MethodPost, "/login", LoginController.Login, nil},
 		},
 	}
 
