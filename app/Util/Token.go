@@ -7,11 +7,19 @@ import (
 )
 
 type UserClaims struct {
-	ID    string `json:"userId"`
-	Name  string `json:"name"`
-	Phone string `json:"phone"`
+	ID         string `json:"userId"`
+	Name       string `json:"name"`
+	Phone      string `json:"phone"`
+	CreateTime string `json:"createTime"`
+	UpdateTime string `json:"updateTime"`
 	//jwt-go提供的标准claim
 	jwt.StandardClaims
+}
+
+func CreateToken(user *UserClaims) (string, error) {
+	newWithClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, user)
+	var configs = config.InitConfig
+	return newWithClaims.SignedString([]byte(configs.Jwt.Secret))
 }
 
 //ParseToekn 解析token

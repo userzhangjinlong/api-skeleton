@@ -22,6 +22,7 @@ func (s *Server) Start() {
 	//gin.SetMode(gin.ReleaseMode)
 
 	//初始化一些全局引擎
+	initConfig()      //初始化配置
 	initDB()          //初始化DB
 	initRedisClient() //redis客户端
 	initTracer()      //全链路追踪
@@ -71,4 +72,8 @@ func initTracer() {
 	}
 	Global.Tracer = jaegerTracer
 	return
+}
+
+func initConfig() {
+	Global.Configs = configs
 }
