@@ -37,3 +37,13 @@ api-skeleton
     1.生成表结构model struct 到app/Model/表名称.go文件
     go run cmd/Cli/main.go sql struct --schema=库名称 --table=表名称
 ~~~
+
+- 实现功能
+~~~
+    1.cobra命令行脚本实现
+    2.mysql链接池
+    3.redis连接池
+    4.鉴权、跨域、访问日志等中间件
+    5.validator验证器
+    6.全链路追踪
+~~~
