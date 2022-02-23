@@ -19,7 +19,7 @@ type TableColumn struct {
 }
 
 var DBTypeToStructType = map[string]string{
-	"int":       "int32",
+	"int":       "int64",
 	"tinyint":   "int8",
 	"smallint":  "int",
 	"mediumint": "int64",
