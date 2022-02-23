@@ -45,7 +45,7 @@ func (l *Login) Login(ctx *gin.Context) {
 			return
 		}
 	}
-	expireTime, _ := strconv.Atoi(Global.Configs.Jwt.Expire)
+	expireTime, _ := time.ParseDuration(Global.Configs.Jwt.Expire)
 	userClaims := Util.UserClaims{
 		ID:         strconv.Itoa(userModel.Id),
 		Name:       userModel.Username,
@@ -53,7 +53,7 @@ func (l *Login) Login(ctx *gin.Context) {
 		CreateTime: strconv.Itoa(int(userModel.CreateTime)),
 		UpdateTime: strconv.Itoa(int(userModel.UpdateTime)),
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Duration(expireTime)).Unix(),
+			ExpiresAt: time.Now().Add(expireTime).Unix(),
 			Issuer:    Global.Configs.Jwt.Issuer,
 			IssuedAt:  time.Now().Unix(),
 		},
