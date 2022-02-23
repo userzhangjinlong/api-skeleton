@@ -26,9 +26,9 @@ func Translations() gin.HandlerFunc {
 	}
 }
 
-func setTrans(ctx *gin.Context) ut.Translator {
+func setTrans(ctx *gin.Context) {
 	//单列模式获取设置的国籍语言单位
-	//todo::可以优化处理这里是否存在local为英文是还是是中文的情况
+	//todo::使用单列模式存在locale变为英文的情况还是中文异常
 	once.Do(func() {
 		uni := ut.New(en.New(), zh.New())
 		locale := ctx.GetHeader("locale")
@@ -51,6 +51,4 @@ func setTrans(ctx *gin.Context) ut.Translator {
 
 		}
 	})
-
-	return transGlobal
 }
