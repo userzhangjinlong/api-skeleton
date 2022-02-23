@@ -1,6 +1,7 @@
 package Request
 
 import (
+	"api-skeleton/app/Cache"
 	"github.com/gin-gonic/gin"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -13,6 +14,8 @@ type ValidError struct {
 }
 
 type ValidErrors []*ValidError
+
+var cache Cache.BaseRedis
 
 func (v *ValidError) Error() string {
 	return v.Message
