@@ -1,7 +1,7 @@
 package Request
 
 import (
-	"api-skeleton/app/Cache"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -14,8 +14,6 @@ type ValidError struct {
 }
 
 type ValidErrors []*ValidError
-
-var cache Cache.BaseRedis
 
 func (v *ValidError) Error() string {
 	return v.Message
@@ -46,6 +44,7 @@ func BindAndValid(ctx *gin.Context, v interface{}) (bool, ValidErrors) {
 		}
 
 		for key, value := range verrs.Translate(trans) {
+			fmt.Printf("key:%s, val:%s", key, value)
 			errs = append(errs, &ValidError{
 				Key:     key,
 				Message: value,

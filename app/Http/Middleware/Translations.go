@@ -28,7 +28,7 @@ func Translations() gin.HandlerFunc {
 
 func setTrans(ctx *gin.Context) {
 	//单列模式获取设置的国籍语言单位
-	//todo::使用单列模式存在locale变为英文的情况还是中文异常
+	//todo::使用单列模式存在locale变为英文的情况还是中文异常，单列使用的原因是并发情况下会有map的并发读写异常考虑sync.lock没起作用待后期优化
 	once.Do(func() {
 		uni := ut.New(en.New(), zh.New())
 		locale := ctx.GetHeader("locale")

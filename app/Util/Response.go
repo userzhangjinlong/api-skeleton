@@ -1,6 +1,7 @@
 package Util
 
 import (
+	"api-skeleton/app/Ecode"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -14,8 +15,8 @@ type Response struct {
 //Success 成功抛出正常信息
 func Success(ctx *gin.Context, data interface{}) {
 	response := Response{
-		Code:    http.StatusOK,
-		Message: "ok",
+		Code:    Ecode.ResponseOk.Code,
+		Message: Ecode.ResponseOk.Message,
 		Data:    data,
 	}
 	ctx.JSON(http.StatusOK, response)
