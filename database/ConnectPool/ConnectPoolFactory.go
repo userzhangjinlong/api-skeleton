@@ -9,6 +9,7 @@ import (
 	"log"
 	"strconv"
 	"sync"
+	"time"
 )
 
 type Pool interface {
@@ -51,12 +52,15 @@ func (this *ConnectPool) InitConnectPool() (result bool) {
 			return false
 		}
 		db.SingularTable(true)
+		//链接池配置
 		MaxIdleConns, _ := strconv.Atoi(configs.Database.MaxIdleConns)
 		MaxOpenConns, _ := strconv.Atoi(configs.Database.MaxOpenConns)
 		// SetMaxIdleConns 用于设置连接池中空闲连接的最大数量
 		db.DB().SetMaxIdleConns(MaxIdleConns)
 		// SetMaxOpenConns 设置打开数据库连接的最大数量。
 		db.DB().SetMaxOpenConns(MaxOpenConns)
+		// SetConnMaxLifetime 设置了连接可复用的最大时间
+		db.DB().SetConnMaxLifetime(time.Hour)
 	case "redis":
 		var redisAddress = configs.Redis.Root + ":" + configs.Redis.Port
 		redisDb, _ := strconv.Atoi(configs.Redis.Db)
