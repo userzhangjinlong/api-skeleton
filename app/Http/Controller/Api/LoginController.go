@@ -26,7 +26,6 @@ func (l *Login) Login(ctx *gin.Context) {
 	valid, errs := Request.BindAndValid(ctx, &param)
 	if !valid {
 		Util.Error(ctx, 100, fmt.Sprintf("参数错误：%s", errs))
-		return
 	}
 
 	//数据表查询用户不存在则创建用户
@@ -42,7 +41,6 @@ func (l *Login) Login(ctx *gin.Context) {
 		err = Global.DB.Create(&userModel).Error
 		if err != nil {
 			Util.Error(ctx, 100, fmt.Sprintf("登陆失败：%s", err))
-			return
 		}
 	}
 	expireTime, _ := time.ParseDuration(Global.Configs.Jwt.Expire)

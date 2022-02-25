@@ -15,8 +15,8 @@ type Response struct {
 //Success 成功抛出正常信息
 func Success(ctx *gin.Context, data interface{}) {
 	response := Response{
-		Code:    Ecode.ResponseOk.Code,
-		Message: Ecode.ResponseOk.Message,
+		Code:    Ecode.ResponseOkCode.Code,
+		Message: Ecode.ResponseOkCode.Message,
 		Data:    data,
 	}
 	ctx.JSON(http.StatusOK, response)
@@ -26,4 +26,5 @@ func Error(ctx *gin.Context, errCode int, msg string) {
 	response := Response{Code: errCode, Message: msg}
 	ctx.JSON(http.StatusOK, response)
 	ctx.Abort()
+	return
 }

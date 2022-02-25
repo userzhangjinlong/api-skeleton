@@ -1,6 +1,7 @@
 package Middleware
 
 import (
+	"api-skeleton/app/Ecode"
 	"api-skeleton/app/Util"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -10,14 +11,13 @@ func Auth() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		token := getToken(ctx)
 		if token == "" {
-			Util.Error(ctx, 401, "请登录！")
-			return
+			Util.Error(ctx, Ecode.LoginUndefinedCode.Code, Ecode.LoginUndefinedCode.Message)
 		}
 
 		//token鉴权解析是否成功判断是否登陆成功或过期
 		userClaims, err := Util.ParseToken(token)
 		if userClaims == nil || err != nil {
-			Util.Error(ctx, 401, fmt.Sprintf("token解析异常或者登陆失效：%s", err))
+			Util.Error(ctx, Ecode.LoginUndefinedCode.Code, fmt.Sprintf("token解析异常或者登陆失效：%s", err))
 			return
 		} else {
 			//设置保存用户信息
