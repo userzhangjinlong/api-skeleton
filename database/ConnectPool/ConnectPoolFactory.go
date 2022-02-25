@@ -57,10 +57,6 @@ func (this *ConnectPool) InitConnectPool() (result bool) {
 		db.DB().SetMaxIdleConns(MaxIdleConns)
 		// SetMaxOpenConns 设置打开数据库连接的最大数量。
 		db.DB().SetMaxOpenConns(MaxOpenConns)
-		//关闭数据库连接，db会自动被多个goroutine共享，可以不调用 db貌似不能关闭需要保持长链接？？
-		//todo::判断处理db是否需要关闭后期优化
-		//defer db.Close()
-		log.Println("mysql:初始化连接成功")
 	case "redis":
 		var redisAddress = configs.Redis.Root + ":" + configs.Redis.Port
 		redisDb, _ := strconv.Atoi(configs.Redis.Db)
@@ -72,10 +68,6 @@ func (this *ConnectPool) InitConnectPool() (result bool) {
 				return redis.Dial("tcp", redisAddress, redis.DialPassword(configs.Redis.Auth), redis.DialDatabase(redisDb))
 			},
 		}
-
-		//todo::判断处理redis是否需要关闭后期优化
-		//defer pool.Close()
-		log.Println("redis：实例化连接成功")
 
 	}
 	return true
