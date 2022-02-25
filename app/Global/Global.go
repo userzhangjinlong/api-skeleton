@@ -3,7 +3,7 @@ package Global
 import (
 	"api-skeleton/config"
 	"github.com/garyburd/redigo/redis"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 var (

@@ -24,5 +24,7 @@ require (
 	golang.org/x/sys v0.0.0-20220207234003-57398862261d // indirect
 	gopkg.in/ini.v1 v1.66.3 // indirect
 	gopkg.in/yaml.v2 v2.4.0
-	gorm.io/plugin/dbresolver v1.1.0 // indirect
+	gorm.io/driver/mysql v1.3.2
+	gorm.io/gorm v1.23.1
+	gorm.io/plugin/dbresolver v1.1.0
 )

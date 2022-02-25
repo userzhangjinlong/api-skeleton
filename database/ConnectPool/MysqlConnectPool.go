@@ -1,7 +1,7 @@
 package ConnectPoolFactory
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 //NewMysql sql工厂加载mysql连接池

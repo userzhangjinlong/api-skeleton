@@ -4,8 +4,10 @@ import (
 	"api-skeleton/app/ConstDir"
 	"fmt"
 	"github.com/garyburd/redigo/redis"
-	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/plugin/dbresolver"
 	"log"
 	"strconv"
 	"sync"
@@ -46,21 +48,30 @@ func (this *ConnectPool) InitConnectPool() (result bool) {
 	switch dbType {
 	case "mysql":
 		source := getDbLibrary(this.library)
-		db, errDb = gorm.Open("mysql", source)
+		//db, errDb = gorm.Open("mysql", source)
+		db, errDb = gorm.Open(mysql.Open(source), &gorm.Config{})
 		if errDb != nil {
 			log.Fatal(errDb.Error())
 			return false
 		}
-		db.SingularTable(true)
+
 		//链接池配置
 		MaxIdleConns, _ := strconv.Atoi(configs.Database.MaxIdleConns)
 		MaxOpenConns, _ := strconv.Atoi(configs.Database.MaxOpenConns)
 		// SetMaxIdleConns 用于设置连接池中空闲连接的最大数量
-		db.DB().SetMaxIdleConns(MaxIdleConns)
-		// SetMaxOpenConns 设置打开数据库连接的最大数量。
-		db.DB().SetMaxOpenConns(MaxOpenConns)
 		// SetConnMaxLifetime 设置了连接可复用的最大时间
-		db.DB().SetConnMaxLifetime(time.Hour)
+		db.Use(
+			dbresolver.Register(dbresolver.Config{
+				Sources:  []gorm.Dialector{mysql.Open(source)},
+				Replicas: []gorm.Dialector{mysql.Open(source), mysql.Open(source)},
+				// sources/replicas 负载均衡策略
+				Policy: dbresolver.RandomPolicy{},
+			}).
+				SetMaxIdleConns(MaxIdleConns).
+				SetMaxOpenConns(MaxOpenConns).
+				SetConnMaxLifetime(24 * time.Hour).
+				SetConnMaxIdleTime(time.Hour),
+		)
 	case "redis":
 		var redisAddress = configs.Redis.Root + ":" + configs.Redis.Port
 		redisDb, _ := strconv.Atoi(configs.Redis.Db)
