@@ -2,6 +2,7 @@ package ConnectPoolFactory
 
 import (
 	"api-skeleton/app/ConstDir"
+	"api-skeleton/app/Model/InformationSchema"
 	"fmt"
 	"github.com/garyburd/redigo/redis"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -47,9 +48,8 @@ func (this *ConnectPool) GetInstance() *ConnectPool {
 func (this *ConnectPool) InitConnectPool() (result bool) {
 	switch dbType {
 	case "mysql":
-		source := getDbLibrary(this.library)
-		//db, errDb = gorm.Open("mysql", source)
-		db, errDb = gorm.Open(mysql.Open(source), &gorm.Config{})
+		//source := getDbLibrary(this.library)
+		db, errDb = gorm.Open(mysql.Open(getDbLibrary(ConstDir.DEFAULT)), &gorm.Config{})
 		if errDb != nil {
 			log.Fatal(errDb.Error())
 			return false
@@ -62,11 +62,11 @@ func (this *ConnectPool) InitConnectPool() (result bool) {
 		// SetConnMaxLifetime 设置了连接可复用的最大时间
 		db.Use(
 			dbresolver.Register(dbresolver.Config{
-				Sources:  []gorm.Dialector{mysql.Open(source)},
-				Replicas: []gorm.Dialector{mysql.Open(source), mysql.Open(source)},
+				Sources:  []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.SCHEMA))},
+				Replicas: []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.SCHEMA))},
 				// sources/replicas 负载均衡策略
 				Policy: dbresolver.RandomPolicy{},
-			}).
+			}, &InformationSchema.Columns{}).
 				SetMaxIdleConns(MaxIdleConns).
 				SetMaxOpenConns(MaxOpenConns).
 				SetConnMaxLifetime(24 * time.Hour).
@@ -111,27 +111,29 @@ func getDbLibrary(library string) string {
 	var source string
 	switch library {
 	case ConstDir.DEFAULT:
-		source = configs.Database.Username +
-			":" + configs.Database.Password +
-			"@tcp(" + configs.Database.Host + ":" +
-			configs.Database.Port +
-			")/" + configs.Database.Name
+		source = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+			configs.Database.Username,
+			configs.Database.Password,
+			configs.Database.Host,
+			configs.Database.Port,
+			configs.Database.Name)
 	case ConstDir.SCHEMA:
-		source = configs.Database.UsernameSchema +
-			":" + configs.Database.PasswordSchema +
-			"@tcp(" + configs.Database.HostSchema + ":" +
-			configs.Database.PortSchema +
-			")/" + configs.Database.NameSchema
+		source = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+			configs.Database.UsernameSchema,
+			configs.Database.PasswordSchema,
+			configs.Database.HostSchema,
+			configs.Database.PortSchema,
+			configs.Database.NameSchema)
 	default:
-		source = configs.Database.Username +
-			":" + configs.Database.Password +
-			"@tcp(" + configs.Database.Host + ":" +
-			configs.Database.Port +
-			")/" + configs.Database.Name
+		source = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+			configs.Database.Username,
+			configs.Database.Password,
+			configs.Database.Host,
+			configs.Database.Port,
+			configs.Database.Name)
 	}
 
 	source += "?charset=" + configs.Database.Charset +
 		"&parseTime=True&loc=Local&timeout=1000ms"
-	fmt.Println(source)
 	return source
 }
