@@ -1,6 +1,8 @@
 package ConstDir
 
 const (
-	DEFAULT = "Default"
-	SCHEMA  = "InformationSchema"
+	DEFAULT      = "Default"
+	DEFAULT_READ = "DefaultRead"
+	SCHEMA       = "InformationSchema"
+	SCHEMA_READ  = "InformationSchemaRead"
 )

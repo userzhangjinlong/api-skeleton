@@ -61,12 +61,12 @@ func (this *ConnectPool) InitConnectPool() (result bool) {
 		// SetConnMaxLifetime 设置了连接可复用的最大时间
 		db.Use(
 			dbresolver.Register(dbresolver.Config{
-				Replicas: []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.DEFAULT))}, //默认库 读写分离读库
+				Replicas: []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.DEFAULT_READ))}, //默认库 读写分离读库
 				// sources/replicas 负载均衡策略
 				Policy: dbresolver.RandomPolicy{},
 			}).Register(dbresolver.Config{
-				Sources:  []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.SCHEMA))}, //主库 读写分离写库
-				Replicas: []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.SCHEMA))}, //从库 读写分离读库
+				Sources:  []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.SCHEMA))},      //主库 读写分离写库
+				Replicas: []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.SCHEMA_READ))}, //从库 读写分离读库
 				// sources/replicas 负载均衡策略
 				Policy: dbresolver.RandomPolicy{},
 			}, ConstDir.SCHEMA).
@@ -111,32 +111,35 @@ func NewConnect(connect string, library string) *ConnectPool {
 }
 
 func getDbLibrary(library string) string {
-	var source string
-	switch library {
-	case ConstDir.DEFAULT:
-		source = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+	sourceMap := map[string]string{
+		ConstDir.DEFAULT: fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
 			configs.Database.Username,
 			configs.Database.Password,
 			configs.Database.Host,
 			configs.Database.Port,
-			configs.Database.Name)
-	case ConstDir.SCHEMA:
-		source = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+			configs.Database.Name),
+		ConstDir.DEFAULT_READ: fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+			configs.Database.Username,
+			configs.Database.Password,
+			configs.Database.Host,
+			configs.Database.Port,
+			configs.Database.Name),
+		ConstDir.SCHEMA: fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
 			configs.Database.UsernameSchema,
 			configs.Database.PasswordSchema,
 			configs.Database.HostSchema,
 			configs.Database.PortSchema,
-			configs.Database.NameSchema)
-	default:
-		source = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
-			configs.Database.Username,
-			configs.Database.Password,
-			configs.Database.Host,
-			configs.Database.Port,
-			configs.Database.Name)
+			configs.Database.NameSchema),
+		ConstDir.SCHEMA_READ: fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+			configs.Database.UsernameSchema,
+			configs.Database.PasswordSchema,
+			configs.Database.HostSchema,
+			configs.Database.PortSchema,
+			configs.Database.NameSchema),
 	}
+	source := sourceMap[library]
 
 	source += "?charset=" + configs.Database.Charset +
-		"&parseTime=True&loc=Local&timeout=1000ms"
+		"&parseTime=True&loc=Local&timeout=5000ms"
 	return source
 }
