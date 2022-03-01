@@ -31,6 +31,9 @@ var DBTypeToStructType = map[string]string{
 	"set":       "string",
 	"varchar":   "string",
 	"char":      "string",
+	"date":      "string",
+	"datetime":  "string",
+	"timestamp": "string",
 }
 
 func (m *DBModel) GetColumns(tableSchema string, tableName string) []*TableColumn {

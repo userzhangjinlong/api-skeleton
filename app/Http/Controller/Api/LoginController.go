@@ -3,7 +3,7 @@ package Api
 import (
 	"api-skeleton/app/Global"
 	"api-skeleton/app/Http/Request"
-	"api-skeleton/app/Model"
+	"api-skeleton/app/Model/ApiSkeleton"
 	"api-skeleton/app/Util"
 	"errors"
 	"fmt"
@@ -29,7 +29,7 @@ func (l *Login) Login(ctx *gin.Context) {
 	}
 
 	//数据表查询用户不存在则创建用户
-	var userModel Model.User
+	var userModel ApiSkeleton.User
 	err := Global.DB.Where("tel = ? and password = ?", param.Username, param.Password).Find(&userModel).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		//数据不存在新增数据

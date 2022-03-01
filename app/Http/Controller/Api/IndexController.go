@@ -3,7 +3,7 @@ package Api
 import (
 	"api-skeleton/app/Cache"
 	"api-skeleton/app/Global"
-	"api-skeleton/app/Model"
+	"api-skeleton/app/Model/ApiSkeleton"
 	"api-skeleton/app/Util"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -34,7 +34,7 @@ func (i *Index) Index(ctx *gin.Context) {
 	traceId, _ := ctx.Get("X-Trace-ID")
 	spanId, _ := ctx.Get("X-Span-ID")
 	userinfo, _ := ctx.Get("User")
-	user := Model.User{}
+	user := ApiSkeleton.User{}
 	Global.DB.Where("tel = ?", "18030769533").Find(&user)
 	logrus.WithFields(logrus.Fields{
 		"code":     200,

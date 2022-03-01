@@ -1,4 +1,4 @@
-package Model
+package ApiSkeleton
 
 type User struct {
 

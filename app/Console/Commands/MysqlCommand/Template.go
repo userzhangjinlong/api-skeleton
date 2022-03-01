@@ -8,7 +8,7 @@ import (
 	"text/template"
 )
 
-const databaseTpl = `package Model
+const databaseTpl = `package {{.DatabaseName}}
 
 type {{.TableName | index}} struct {
  {{range.Column}} {{$length := len .Comment}} {{if gt $length 0}}
@@ -33,8 +33,9 @@ type DatabaseColumn struct {
 }
 
 type StructTemplateDB struct {
-	TableName string
-	Column    []*DatabaseColumn
+	TableName    string
+	DatabaseName string
+	Column       []*DatabaseColumn
 }
 
 //NewDatabaseTemplate 实例化表名称
@@ -68,8 +69,9 @@ func (db *DatabaseTemplate) Generate(dataBaseName string, tableName string, tplC
 	}).Parse(db.databaseTpl))
 
 	tplDB := StructTemplateDB{
-		TableName: tableName,
-		Column:    tplColumns,
+		TableName:    tableName,
+		DatabaseName: Util.Capitalize(dataBaseName),
+		Column:       tplColumns,
 	}
 
 	buf := new(bytes.Buffer)
