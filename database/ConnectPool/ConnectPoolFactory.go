@@ -61,8 +61,12 @@ func (this *ConnectPool) InitConnectPool() (result bool) {
 		// SetConnMaxLifetime 设置了连接可复用的最大时间
 		db.Use(
 			dbresolver.Register(dbresolver.Config{
-				Sources:  []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.SCHEMA))},
-				Replicas: []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.SCHEMA))},
+				Replicas: []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.DEFAULT))}, //默认库 读写分离读库
+				// sources/replicas 负载均衡策略
+				Policy: dbresolver.RandomPolicy{},
+			}).Register(dbresolver.Config{
+				Sources:  []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.SCHEMA))}, //主库 读写分离写库
+				Replicas: []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.SCHEMA))}, //从库 读写分离读库
 				// sources/replicas 负载均衡策略
 				Policy: dbresolver.RandomPolicy{},
 			}, ConstDir.SCHEMA).
