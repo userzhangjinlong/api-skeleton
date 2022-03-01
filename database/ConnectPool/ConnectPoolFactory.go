@@ -2,7 +2,6 @@ package ConnectPoolFactory
 
 import (
 	"api-skeleton/app/ConstDir"
-	"api-skeleton/app/Model/InformationSchema"
 	"fmt"
 	"github.com/garyburd/redigo/redis"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -55,7 +54,7 @@ func (this *ConnectPool) InitConnectPool() (result bool) {
 			return false
 		}
 
-		//链接池配置
+		//链接池配置、集群数据源链接配置
 		MaxIdleConns, _ := strconv.Atoi(configs.Database.MaxIdleConns)
 		MaxOpenConns, _ := strconv.Atoi(configs.Database.MaxOpenConns)
 		// SetMaxIdleConns 用于设置连接池中空闲连接的最大数量
@@ -66,7 +65,7 @@ func (this *ConnectPool) InitConnectPool() (result bool) {
 				Replicas: []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.SCHEMA))},
 				// sources/replicas 负载均衡策略
 				Policy: dbresolver.RandomPolicy{},
-			}, &InformationSchema.Columns{}).
+			}, ConstDir.SCHEMA).
 				SetMaxIdleConns(MaxIdleConns).
 				SetMaxOpenConns(MaxOpenConns).
 				SetConnMaxLifetime(24 * time.Hour).

@@ -1,14 +1,9 @@
 package bootstrap
 
 import (
-	"api-skeleton/app/ConstDir"
-	"api-skeleton/app/Global"
 	"api-skeleton/app/Http/Middleware"
-	"api-skeleton/app/Util"
 	"api-skeleton/config"
-	ConnectPoolFactory "api-skeleton/database/ConnectPool"
 	Route "api-skeleton/routes"
-	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,10 +17,10 @@ func (s *Server) Start() {
 	//gin.SetMode(gin.ReleaseMode)
 
 	//初始化一些全局引擎
-	initConfig()      //初始化配置
-	initDB()          //初始化DB
-	initRedisClient() //redis客户端
-	initTracer()      //全链路追踪
+	InitConfig()      //初始化配置
+	InitDB()          //初始化DB
+	InitRedisClient() //redis客户端
+	InitTracer()      //全链路追踪
 
 	//引擎启动
 	engine := gin.Default()
@@ -44,36 +39,4 @@ func (s *Server) Start() {
 
 	//启动引擎
 	engine.Run(configs.Proxy.Port)
-}
-
-func initDB() {
-	db, err := ConnectPoolFactory.GetMysql(ConstDir.DEFAULT)
-	if err != nil {
-		panic("db链接获取异常")
-	}
-	Global.DB = db
-}
-
-func initRedisClient() {
-	//初始化设置全局变量
-	redisPool, _ := ConnectPoolFactory.GetRedis()
-	Global.RedisClient = redisPool.Get()
-}
-
-func initTracer() {
-	jaegerTracer, _, err := Util.NewJaegerTracer(
-		configs.Trace.Servicename,
-		fmt.Sprintf("%s%s", configs.Trace.Agenthost, configs.Trace.Port),
-	)
-
-	if err != nil {
-		//todo::异常日志记录链接tracer链路追综异常
-		return
-	}
-	Global.Tracer = jaegerTracer
-	return
-}
-
-func initConfig() {
-	Global.Configs = configs
 }

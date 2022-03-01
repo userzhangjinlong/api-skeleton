@@ -62,7 +62,7 @@ func (db *DatabaseTemplate) AssemblyColumns(tbColumns []*TableColumn) []*Databas
 }
 
 //Generate 处理渲染模板内容
-func (db *DatabaseTemplate) Generate(tableName string, tplColumns []*DatabaseColumn) error {
+func (db *DatabaseTemplate) Generate(dataBaseName string, tableName string, tplColumns []*DatabaseColumn) error {
 	tpl := template.Must(template.New("MysqlCommand").Funcs(template.FuncMap{
 		"index": Util.UnderscoreToUpperCamelCase,
 	}).Parse(db.databaseTpl))
@@ -78,14 +78,15 @@ func (db *DatabaseTemplate) Generate(tableName string, tplColumns []*DatabaseCol
 	if err != nil {
 		return err
 	}
-	putStringInFile(Util.UnderscoreToUpperCamelCase(tableName), buf.String())
+	putStringInFile(dataBaseName, Util.UnderscoreToUpperCamelCase(tableName), buf.String())
 
 	return nil
 }
 
 //putInFile 将写入buff池内的内容写入指定文件
-func putStringInFile(fileName string, bufString string) error {
-	file, err := os.OpenFile("app/Model/"+fileName+".go", os.O_CREATE|os.O_WRONLY, 0664)
+func putStringInFile(dataBaseName string, fileName string, bufString string) error {
+	Util.CreateIfNotExistDir("app/Model/" + Util.Capitalize(dataBaseName))
+	file, err := os.OpenFile("app/Model/"+Util.Capitalize(dataBaseName)+"/"+fileName+".go", os.O_CREATE|os.O_WRONLY, 0664)
 
 	if err != nil {
 		fmt.Println("open file err", err)

@@ -6,10 +6,9 @@ import (
 )
 
 var (
-	dbName      string
-	tableSchema string
-	tableName   string
-	dbModel     DBModel
+	dataBaseName string
+	tableName    string
+	dbModel      DBModel
 )
 
 var SqlCmd = &cobra.Command{
@@ -24,11 +23,11 @@ var TableColumnToStructCmd = &cobra.Command{
 	Short: "表字段转为结构体类",
 	Long:  "表字段转为结构体类",
 	Run: func(cmd *cobra.Command, args []string) {
-		columns := dbModel.GetColumns(dbName, tableSchema, tableName)
+		columns := dbModel.GetColumns(dataBaseName, tableName)
 
 		template := NewDatabaseTemplate()
 		templateColumns := template.AssemblyColumns(columns)
-		err := template.Generate(tableName, templateColumns)
+		err := template.Generate(dataBaseName, tableName, templateColumns)
 		if err != nil {
 			log.Fatalf("template.Generate err: %v", err)
 		}
@@ -38,7 +37,6 @@ var TableColumnToStructCmd = &cobra.Command{
 
 func init() {
 	SqlCmd.AddCommand(TableColumnToStructCmd)
-	TableColumnToStructCmd.Flags().StringVarP(&dbName, "db", "", "", "请输入数据库名称")
-	TableColumnToStructCmd.Flags().StringVarP(&tableSchema, "schema", "", "", "请输如tableSchema名称")
+	TableColumnToStructCmd.Flags().StringVarP(&dataBaseName, "schema", "", "", "请输如tableSchema名称")
 	TableColumnToStructCmd.Flags().StringVarP(&tableName, "table", "", "", "请输入表名称")
 }
