@@ -4,7 +4,6 @@ import (
 	"api-skeleton/app/ConstDir"
 	"fmt"
 	"github.com/garyburd/redigo/redis"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/plugin/dbresolver"
