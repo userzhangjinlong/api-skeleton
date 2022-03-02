@@ -3,7 +3,7 @@ package ConnectPoolFactory
 import (
 	"api-skeleton/app/ConstDir"
 	"fmt"
-	"github.com/garyburd/redigo/redis"
+	"github.com/go-redis/redis"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/plugin/dbresolver"
@@ -24,7 +24,7 @@ var (
 	instance *ConnectPool
 	errDb    error
 	db       *gorm.DB
-	pool     *redis.Pool
+	pool     *redis.Client
 	redisDb  int
 	dbType   string
 )
@@ -75,15 +75,18 @@ func (this *ConnectPool) InitConnectPool() (result bool) {
 				SetConnMaxIdleTime(time.Hour),
 		)
 	case "redis":
-		var redisAddress = configs.Redis.Root + ":" + configs.Redis.Port
 		redisDb, _ := strconv.Atoi(configs.Redis.Db)
-		pool = &redis.Pool{
-			MaxIdle:     10000,
-			MaxActive:   0,
-			IdleTimeout: 300,
-			Dial: func() (redis.Conn, error) {
-				return redis.Dial("tcp", redisAddress, redis.DialPassword(configs.Redis.Auth), redis.DialDatabase(redisDb))
-			},
+		pool = redis.NewClient(&redis.Options{
+			Addr:     fmt.Sprintf("%s:%s", configs.Redis.Root, configs.Redis.Port), // redis地址
+			Password: configs.Redis.Auth,                                           // redis密码，没有则留空
+			DB:       redisDb,                                                      // 默认数据库，默认是0
+		})
+
+		//通过 *redis.Client.Ping() 来检查是否成功连接到了redis服务器
+		_, err := pool.Ping().Result()
+		if err != nil {
+			log.Fatalf("redis链接异常：%s", err)
+			return false
 		}
 
 	}

@@ -2,14 +2,14 @@ package Cache
 
 import (
 	"api-skeleton/app/Global"
-	"github.com/garyburd/redigo/redis"
+	"time"
 )
 
 type RedisClient interface {
 	SelectDB(db int)
 	Expire(key string, ttl int) (bool, error)
 	Get(key string) (string, error)
-	Set(key string, value interface{}) (bool, error)
+	Set(key string, value interface{}, expireTime time.Duration) (bool, error)
 	HSet(key string, field string, value interface{}) (bool, error)
 	HGet(key string, name string) (string, error)
 }
@@ -24,7 +24,7 @@ func (r *BaseRedis) SelectDB(db int) {
 
 //Expire redis key expire
 func (r *BaseRedis) Expire(key string, ttl int) (bool, error) {
-	val, err := redis.Bool(Global.RedisClient.Do("expire", key, ttl))
+	val, err := Global.RedisClient.Expire(key, time.Duration(ttl)).Result()
 	if err != nil {
 		return val, err
 	}
@@ -34,7 +34,7 @@ func (r *BaseRedis) Expire(key string, ttl int) (bool, error) {
 
 //Get redis get
 func (r *BaseRedis) Get(key string) (string, error) {
-	val, err := redis.String(Global.RedisClient.Do("get", key))
+	val, err := Global.RedisClient.Get(key).Result()
 	if err != nil {
 		return "", err
 	}
@@ -43,8 +43,8 @@ func (r *BaseRedis) Get(key string) (string, error) {
 }
 
 //Set set key value
-func (r *BaseRedis) Set(key string, value interface{}) (bool, error) {
-	_, err := Global.RedisClient.Do("set", key, value)
+func (r *BaseRedis) Set(key string, value interface{}, ttl time.Duration) (bool, error) {
+	_, err := Global.RedisClient.Set(key, value, ttl).Result()
 	if err != nil {
 		return false, err
 	}
@@ -54,7 +54,7 @@ func (r *BaseRedis) Set(key string, value interface{}) (bool, error) {
 
 //HSet redis hash set
 func (r *BaseRedis) HSet(key string, field string, value interface{}) (bool, error) {
-	val, err := redis.Bool(Global.RedisClient.Do("hSet", key, field, value))
+	val, err := Global.RedisClient.HSet(key, field, value).Result()
 	if err != nil {
 		return val, err
 	}
@@ -64,7 +64,7 @@ func (r *BaseRedis) HSet(key string, field string, value interface{}) (bool, err
 
 //HGet redis hash get string
 func (r *BaseRedis) HGet(key string, name string) (string, error) {
-	val, err := redis.String(Global.RedisClient.Do("hGet", key, name))
+	val, err := Global.RedisClient.HGet(key, name).Result()
 	if err != nil {
 		return "", err
 	}
@@ -73,8 +73,8 @@ func (r *BaseRedis) HGet(key string, name string) (string, error) {
 }
 
 //LPush redis list Lpush
-func (r *BaseRedis) LPush(key string, value interface{}) (bool, error) {
-	val, err := redis.Bool(Global.RedisClient.Do("lpush", key, value))
+func (r *BaseRedis) LPush(key string, value interface{}) (int64, error) {
+	val, err := Global.RedisClient.LPush(key, value).Result()
 	if err != nil {
 		return val, err
 	}
@@ -84,7 +84,7 @@ func (r *BaseRedis) LPush(key string, value interface{}) (bool, error) {
 
 //LPop redis list lpop
 func (r *BaseRedis) LPop(key string) error {
-	_, err := redis.Bool(Global.RedisClient.Do("lpop", key))
+	_, err := Global.RedisClient.LPop(key).Result()
 	if err != nil {
 		return err
 	}

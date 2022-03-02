@@ -2,7 +2,7 @@ package ConnectPoolFactory
 
 import (
 	"api-skeleton/config"
-	"github.com/garyburd/redigo/redis"
+	"github.com/go-redis/redis"
 	"strconv"
 )
 
@@ -31,11 +31,11 @@ func SelectDb(db int) (result bool) {
 }
 
 //GetRedis redis工厂获取redis连接池
-func GetRedis() (redisPool *redis.Pool, err error) {
+func GetRedis() (redisPool *redis.Client, err error) {
 	if !NewRedis() {
 		panic("redis链接异常")
 	}
 	redisConnect, errRedis := NewConnect("redis", "").GetInstance().GetConnectLibrary()
 
-	return redisConnect.(*redis.Pool), errRedis
+	return redisConnect.(*redis.Client), errRedis
 }

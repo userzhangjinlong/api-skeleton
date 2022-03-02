@@ -19,7 +19,7 @@ func InitDB() {
 func InitRedisClient() {
 	//初始化设置全局变量
 	redisPool, _ := ConnectPoolFactory.GetRedis()
-	Global.RedisClient = redisPool.Get()
+	Global.RedisClient = redisPool
 }
 
 func InitTracer() {

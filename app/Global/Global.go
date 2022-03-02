@@ -2,12 +2,12 @@ package Global
 
 import (
 	"api-skeleton/config"
-	"github.com/garyburd/redigo/redis"
+	"github.com/go-redis/redis"
 	"gorm.io/gorm"
 )
 
 var (
-	RedisClient redis.Conn
+	RedisClient *redis.Client
 	DB          *gorm.DB
 	Configs     *config.System
 )
