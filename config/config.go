@@ -1,13 +1,14 @@
 package config
 
 type System struct {
-	App      App      `json:"app" ini:"app"`
-	Database Database `json:"database" ini:"database"`
-	Redis    Redis    `json:"redis" ini:"redis"`
-	Log      Log      `json:"log" ini:"log"`
-	Proxy    Proxy    `json:"proxy" ini:"proxy"`
-	Trace    Trace    `json:"trace" ini:"trace"`
-	Jwt      Jwt      `json:"jwt" ini:"jwt"`
+	App          App          `json:"app" ini:"app"`
+	Database     Database     `json:"database" ini:"database"`
+	Redis        Redis        `json:"redis" ini:"redis"`
+	Log          Log          `json:"log" ini:"log"`
+	Proxy        Proxy        `json:"proxy" ini:"proxy"`
+	Trace        Trace        `json:"trace" ini:"trace"`
+	Jwt          Jwt          `json:"jwt" ini:"jwt"`
+	RedisCluster RedisCluster `json:"redis-cluster" ini:"redis-cluster"`
 }
 
 type App struct {
@@ -37,6 +38,17 @@ type Redis struct {
 	Auth string `mapstructure:"auth" json:"auth" ini:"auth"`
 	Port string `mapstructure:"port" json:"port" ini:"port"`
 	Db   string `mapstructure:"db" json:"db" ini:"db"`
+}
+
+type RedisCluster struct {
+	Root      string `mapstructure:"root" json:"root" ini:"root"`
+	Auth      string `mapstructure:"auth" json:"auth" ini:"auth"`
+	PortOne   string `mapstructure:"portone" json:"portone" ini:"portone"`
+	PortTwo   string `mapstructure:"porttwo" json:"porttwo" ini:"porttwo"`
+	PortThree string `mapstructure:"portthree" json:"portthree" ini:"portthree"`
+	PortFour  string `mapstructure:"portfour" json:"portfour" ini:"portfour"`
+	PortFive  string `mapstructure:"portfive" json:"portfive" ini:"portfive"`
+	PortSix   string `mapstructure:"portsix" json:"portsix" ini:"portsix"`
 }
 
 type Log struct {

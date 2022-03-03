@@ -2,6 +2,7 @@ package Cache
 
 import (
 	"api-skeleton/app/Global"
+	"fmt"
 	"time"
 )
 
@@ -35,6 +36,8 @@ func (r *BaseRedis) Expire(key string, ttl int) (bool, error) {
 //Get redis get
 func (r *BaseRedis) Get(key string) (string, error) {
 	val, err := Global.RedisClient.Get(key).Result()
+	fmt.Println(val)
+	fmt.Println(err)
 	if err != nil {
 		return "", err
 	}

@@ -22,6 +22,12 @@ func InitRedisClient() {
 	Global.RedisClient = redisPool
 }
 
+func InitRedisClusterClient() {
+	//初始化设置全局变量
+	redisPool, _ := ConnectPoolFactory.GetRedisCluster()
+	Global.RedisCluster = redisPool
+}
+
 func InitTracer() {
 	jaegerTracer, _, err := Util.NewJaegerTracer(
 		configs.Trace.Servicename,

@@ -17,10 +17,11 @@ func (s *Server) Start() {
 	//gin.SetMode(gin.ReleaseMode)
 
 	//初始化一些全局引擎
-	InitConfig()      //初始化配置
-	InitDB()          //初始化DB
-	InitRedisClient() //redis客户端
-	InitTracer()      //全链路追踪
+	InitConfig()             //初始化配置
+	InitDB()                 //初始化DB
+	InitRedisClient()        //redis客户端
+	InitRedisClusterClient() //redis集群客户端
+	InitTracer()             //全链路追踪
 
 	//引擎启动
 	engine := gin.Default()

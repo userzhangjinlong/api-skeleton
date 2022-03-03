@@ -1,7 +1,6 @@
 package Api
 
 import (
-	"api-skeleton/app/Cache"
 	"api-skeleton/app/Global"
 	"api-skeleton/app/Model/ApiSkeleton"
 	"api-skeleton/app/Util"
@@ -25,8 +24,10 @@ func (i *Index) Index(ctx *gin.Context) {
 	//	Util.Error(ctx, 400, errString)
 	//	return
 	//}
-	var cache Cache.BaseRedis
-	val, _ := cache.HGet("user", "1")
+	//var cache Cache.BaseRedis
+	//val, _ := cache.Get("test")
+	//集群使用获取方式
+	val := Global.RedisCluster.Get("test").Val()
 	//val, err1 := cache.Get("test")
 	//if err1 != nil {
 	//	fmt.Println(err1)

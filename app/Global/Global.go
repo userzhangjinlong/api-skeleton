@@ -7,7 +7,8 @@ import (
 )
 
 var (
-	RedisClient *redis.Client
-	DB          *gorm.DB
-	Configs     *config.System
+	RedisClient  *redis.Client
+	RedisCluster *redis.ClusterClient
+	DB           *gorm.DB
+	Configs      *config.System
 )

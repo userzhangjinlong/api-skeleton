@@ -20,13 +20,14 @@ type Pool interface {
 }
 
 var (
-	once     sync.Once
-	instance *ConnectPool
-	errDb    error
-	db       *gorm.DB
-	pool     *redis.Client
-	redisDb  int
-	dbType   string
+	once        sync.Once
+	instance    *ConnectPool
+	errDb       error
+	db          *gorm.DB
+	pool        *redis.Client
+	poolCluster *redis.ClusterClient
+	redisDb     int
+	dbType      string
 )
 
 type ConnectPool struct {
@@ -88,7 +89,27 @@ func (this *ConnectPool) InitConnectPool() (result bool) {
 			log.Fatalf("redis链接异常：%s", err)
 			return false
 		}
-
+	case "redisCluster":
+		//redis-cluster 启用方式
+		poolCluster = redis.NewClusterClient(&redis.ClusterOptions{
+			Addrs: []string{
+				fmt.Sprintf("%s:%s", configs.RedisCluster.Root, configs.RedisCluster.PortOne),
+				fmt.Sprintf("%s:%s", configs.RedisCluster.Root, configs.RedisCluster.PortTwo),
+				fmt.Sprintf("%s:%s", configs.RedisCluster.Root, configs.RedisCluster.PortThree),
+				fmt.Sprintf("%s:%s", configs.RedisCluster.Root, configs.RedisCluster.PortFour),
+				fmt.Sprintf("%s:%s", configs.RedisCluster.Root, configs.RedisCluster.PortFive),
+				fmt.Sprintf("%s:%s", configs.RedisCluster.Root, configs.RedisCluster.PortSix),
+			},
+			Password:     configs.RedisCluster.Auth,
+			DialTimeout:  500 * time.Millisecond, // 设置连接超时
+			ReadTimeout:  500 * time.Millisecond, // 设置读取超时
+			WriteTimeout: 500 * time.Millisecond, // 设置写入超时
+		})
+		_, err := poolCluster.Ping().Result()
+		if err != nil {
+			log.Fatalf("redis集群链接异常：%s", err)
+			return false
+		}
 	}
 	return true
 }
@@ -100,6 +121,8 @@ func (this *ConnectPool) GetConnectLibrary() (res interface{}, err error) {
 		return db, err
 	case "redis":
 		return pool, err
+	case "redisCluster":
+		return poolCluster, err
 	default:
 		return db, err
 	}
