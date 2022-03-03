@@ -41,7 +41,7 @@ api-skeleton
 - 实现功能
 ~~~
     1.cobra命令行脚本
-    2.redis连接、redis-cluster（待实现）
+    2.redis连接、redis-cluster集群
     3.鉴权、跨域、访问日志等中间件
     4.validator验证器
     5.全链路追踪
