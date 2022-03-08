@@ -16,7 +16,7 @@ require (
 	github.com/juju/ratelimit v1.0.1 // indirect
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/lestrrat-go/strftime v1.0.5 // indirect
-	github.com/nsqio/go-nsq v1.1.0 // indirect
+	github.com/nsqio/go-nsq v1.1.0
 	github.com/opentracing/opentracing-go v1.1.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/afero v1.8.0 // indirect

@@ -1,9 +1,11 @@
 package Api
 
 import (
+	"api-skeleton/app/Cache"
 	"api-skeleton/app/Global"
 	"api-skeleton/app/Model/ApiSkeleton"
 	"api-skeleton/app/Util"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -24,10 +26,10 @@ func (i *Index) Index(ctx *gin.Context) {
 	//	Util.Error(ctx, 400, errString)
 	//	return
 	//}
-	//var cache Cache.BaseRedis
-	//val, _ := cache.Get("test")
+	var cache Cache.BaseRedis
+	val, _ := cache.Get("test")
 	//集群使用获取方式
-	val := Global.RedisCluster.Get("test").Val()
+	//val := Global.RedisCluster.Get("test").Val()
 	//val, err1 := cache.Get("test")
 	//if err1 != nil {
 	//	fmt.Println(err1)
@@ -52,5 +54,20 @@ func (i *Index) Index(ctx *gin.Context) {
 	result.Val = val
 	result.LoginInfo = userinfo
 	result.User = user
+
+	//测试写入nsq消息
+	// 生产者写入nsq,10条消息，topic = "test"
+	topic := "test"
+	for i := 0; i < 10; i++ {
+		message := fmt.Sprintf("message:%d", i)
+		if message != "" { //不能发布空串，否则会导致error
+			err := Global.NsqProducer.Publish(topic, []byte(message)) // 发布消息
+			if err != nil {
+				fmt.Printf("producer.Publish,err : %v", err)
+			}
+			fmt.Println(message)
+		}
+	}
+
 	Util.Success(ctx, result)
 }

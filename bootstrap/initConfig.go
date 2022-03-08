@@ -6,6 +6,7 @@ import (
 	"api-skeleton/app/Util"
 	ConnectPoolFactory "api-skeleton/database/ConnectPool"
 	"fmt"
+	"github.com/nsqio/go-nsq"
 )
 
 func InitDB() {
@@ -44,4 +45,21 @@ func InitTracer() {
 
 func InitConfig() {
 	Global.Configs = configs
+}
+
+func InitNsqProducer() {
+	nsqAddress := fmt.Sprintf("%s:%s", configs.Nsq.Host, configs.Nsq.Node1)
+	producer, err := nsq.NewProducer(nsqAddress, nsq.NewConfig())
+	if err != nil {
+		panic(err)
+	}
+
+	err = producer.Ping()
+	if err != nil {
+		//关闭生产者
+		producer.Stop()
+		panic("nsq链接异常")
+	}
+
+	Global.NsqProducer = producer
 }

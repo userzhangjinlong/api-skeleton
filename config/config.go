@@ -9,6 +9,7 @@ type System struct {
 	Trace        Trace        `json:"trace" ini:"trace"`
 	Jwt          Jwt          `json:"jwt" ini:"jwt"`
 	RedisCluster RedisCluster `json:"redis-cluster" ini:"redis-cluster"`
+	Nsq          Nsq          `json:"nsq" ini:"nsq"`
 }
 
 type App struct {
