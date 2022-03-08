@@ -34,6 +34,7 @@ var DBTypeToStructType = map[string]string{
 	"date":      "string",
 	"datetime":  "string",
 	"timestamp": "string",
+	"decimal":   "float64",
 }
 
 func (m *DBModel) GetColumns(tableSchema string, tableName string) []*TableColumn {

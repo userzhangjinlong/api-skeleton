@@ -5,7 +5,7 @@ import (
 	"api-skeleton/app/Global"
 	"api-skeleton/app/Model/ApiSkeleton"
 	"api-skeleton/app/Util"
-	"fmt"
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -49,25 +49,39 @@ func (i *Index) Index(ctx *gin.Context) {
 		Val       string      `json:"vals"`
 		LoginInfo interface{} `json:"userinfo"`
 		User      interface{} `json:"user"`
+		Data      interface{} `json:"data"`
 	}{}
 
 	result.Val = val
 	result.LoginInfo = userinfo
 	result.User = user
 
+	//curl 客户端工具调试
+	getAddress := "http://qa.wpt.la/mofei/japi/user/findUser?verifyStatus=individual_verify_pass&size=10&phone=true&scene=weertre"
+	header := make(map[string]string, 1)
+	header["Cookie"] = "wpt_env_num=test-06"
+	resData := Util.CurlRequestGet(getAddress, header, nil)
+	res := struct {
+		Code int `json:"code"`
+		Data struct {
+			Code int `json:"code"`
+			Data []struct {
+				ID    string `json:"id"`
+				Phone string `json:"phone"`
+				URI   string `json:"uri"`
+			} `json:"data"`
+			Msg string `json:"msg"`
+		} `json:"data"`
+		Msg string `json:"msg"`
+	}{}
+	json.Unmarshal(resData, &res)
+	//消息投递 创建数据
 	//测试写入nsq消息
 	// 生产者写入nsq,10条消息，topic = "test"
-	topic := "test"
-	for i := 0; i < 10; i++ {
-		message := fmt.Sprintf("message:%d", i)
-		if message != "" { //不能发布空串，否则会导致error
-			err := Global.NsqProducer.Publish(topic, []byte(message)) // 发布消息
-			if err != nil {
-				fmt.Printf("producer.Publish,err : %v", err)
-			}
-			fmt.Println(message)
-		}
+	topic := "createRankingMessage"
+	for _, v := range res.Data.Data {
+		Util.DeliveryNsqMessage(topic, []byte(v.ID))
 	}
-
+	result.Data = res
 	Util.Success(ctx, result)
 }
