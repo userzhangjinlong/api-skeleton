@@ -9,6 +9,12 @@ import (
 	"github.com/nsqio/go-nsq"
 )
 
+//InitConfig 初始化config配置
+func InitConfig() {
+	Global.Configs = configs
+}
+
+//InitDB 初始化mysq
 func InitDB() {
 	db, err := ConnectPoolFactory.GetMysql(ConstDir.DEFAULT)
 	if err != nil {
@@ -17,18 +23,21 @@ func InitDB() {
 	Global.DB = db
 }
 
+//InitRedisClient 初始化redis
 func InitRedisClient() {
 	//初始化设置全局变量
 	redisPool, _ := ConnectPoolFactory.GetRedis()
 	Global.RedisClient = redisPool
 }
 
+//InitRedisClusterClient 初始化redis-cluster
 func InitRedisClusterClient() {
 	//初始化设置全局变量
 	redisPool, _ := ConnectPoolFactory.GetRedisCluster()
 	Global.RedisCluster = redisPool
 }
 
+//InitTracer 初始化jaegerTracer
 func InitTracer() {
 	jaegerTracer, _, err := Util.NewJaegerTracer(
 		configs.Trace.Servicename,
@@ -43,13 +52,12 @@ func InitTracer() {
 	return
 }
 
-func InitConfig() {
-	Global.Configs = configs
-}
-
+//InitNsqProducer 初始化nsq生产者
 func InitNsqProducer() {
 	nsqAddress := fmt.Sprintf("%s:%s", configs.Nsq.Host, configs.Nsq.Node1)
-	producer, err := nsq.NewProducer(nsqAddress, nsq.NewConfig())
+	nsqConfig := nsq.NewConfig()
+	nsqConfig.AuthSecret = configs.Nsq.Password
+	producer, err := nsq.NewProducer(nsqAddress, nsqConfig)
 	if err != nil {
 		panic(err)
 	}

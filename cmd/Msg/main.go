@@ -26,6 +26,7 @@ func main() {
 	)
 	//实例化配置文件
 	cfg := nsq.NewConfig()
+	cfg.AuthSecret = configs.Nsq.Password
 	cfg.LookupdPollInterval = 3 * time.Second
 	//设置重连时间
 	consumer, err := nsq.NewConsumer(topic, topic, cfg)
