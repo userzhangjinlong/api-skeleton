@@ -49,7 +49,7 @@ api-skeleton
     4.validator验证器
     5.全链路追踪
     7.mysql分库集群链接，读写分离
-    8.nsq消息生产消费。nsq集群（待实现）
+    8.nsq消息生产消费。nsq集群
 ~~~
 
 - 待优化
