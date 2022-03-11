@@ -55,9 +55,21 @@ func InitTracer() {
 //InitNsqProducer 初始化nsq生产者
 func InitNsqProducer() {
 	nsqAddress := fmt.Sprintf("%s:%s", configs.Nsq.Host, configs.Nsq.Node1)
+	nsqAddress2 := fmt.Sprintf("%s:%s", configs.Nsq.Host, configs.Nsq.Node2)
+	nsqAddress3 := fmt.Sprintf("%s:%s", configs.Nsq.Host, configs.Nsq.Node3)
 	nsqConfig := nsq.NewConfig()
 	nsqConfig.AuthSecret = configs.Nsq.Password
 	producer, err := nsq.NewProducer(nsqAddress, nsqConfig)
+	if err != nil {
+		panic(err)
+	}
+
+	producer2, err := nsq.NewProducer(nsqAddress2, nsqConfig)
+	if err != nil {
+		panic(err)
+	}
+
+	producer3, err := nsq.NewProducer(nsqAddress3, nsqConfig)
 	if err != nil {
 		panic(err)
 	}
@@ -66,8 +78,24 @@ func InitNsqProducer() {
 	if err != nil {
 		//关闭生产者
 		producer.Stop()
-		panic("nsq链接异常")
+		panic("nsq节点1链接异常")
+	}
+
+	err = producer2.Ping()
+	if err != nil {
+		//关闭生产者
+		producer2.Stop()
+		panic("nsq节点2链接异常")
+	}
+
+	err = producer3.Ping()
+	if err != nil {
+		//关闭生产者
+		producer3.Stop()
+		panic("nsq节点3链接异常")
 	}
 
 	Global.NsqProducer = producer
+	Global.NsqProducer2 = producer2
+	Global.NsqProducer3 = producer3
 }
