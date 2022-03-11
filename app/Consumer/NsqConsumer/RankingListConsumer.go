@@ -29,4 +29,5 @@ func (c *Consumer) CreateRankingListConsumer() {
 		}
 	}()
 	select {}
+
 }

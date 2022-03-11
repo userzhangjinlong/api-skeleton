@@ -36,6 +36,9 @@ api-skeleton
 ~~~
     1.生成表结构model struct 到app/Model/库名称/表名称.go文件
     go run cmd/Cli/main.go sql struct --schema=生产库名称 --table=生成表名称
+    
+    2.声明一个nsq消费者 -T topic -C chanel
+     go run cmd/Msg/main.go -T createRankingMessage -C createRankingMessage
 ~~~
 
 - 实现功能
@@ -46,7 +49,7 @@ api-skeleton
     4.validator验证器
     5.全链路追踪
     7.mysql分库集群链接，读写分离
-    8.nsq消息投递 (待实现)
+    8.nsq消息生产消费。nsq集群（待实现）
 ~~~
 
 - 待优化
