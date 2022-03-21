@@ -10,6 +10,7 @@ type System struct {
 	Jwt          Jwt          `json:"jwt" ini:"jwt"`
 	RedisCluster RedisCluster `json:"redis-cluster" ini:"redis-cluster"`
 	Nsq          Nsq          `json:"nsq" ini:"nsq"`
+	Kafka        Kafka        `json:"kafka" ini:"kafka"`
 }
 
 type App struct {

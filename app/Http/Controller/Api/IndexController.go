@@ -5,7 +5,6 @@ import (
 	"api-skeleton/app/Global"
 	"api-skeleton/app/Model/ApiSkeleton"
 	"api-skeleton/app/Util"
-	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -57,35 +56,39 @@ func (i *Index) Index(ctx *gin.Context) {
 	result.User = user
 
 	//curl 客户端工具调试
-	getAddress := "http://qa.wpt.la/mofei/japi/user/findUser?verifyStatus=individual_verify_pass&size=10&phone=true&scene=weertre"
-	header := make(map[string]string, 1)
-	header["Cookie"] = "wpt_env_num=test-06"
-	resData := Util.CurlRequestGet(getAddress, header, nil)
-	res := struct {
-		Code int `json:"code"`
-		Data struct {
-			Code int `json:"code"`
-			Data []struct {
-				ID    string `json:"id"`
-				Phone string `json:"phone"`
-				URI   string `json:"uri"`
-			} `json:"data"`
-			Msg string `json:"msg"`
-		} `json:"data"`
-		Msg string `json:"msg"`
-	}{}
-	json.Unmarshal(resData, &res)
+	//getAddress := "http://qa.wpt.la/mofei/japi/user/findUser?verifyStatus=individual_verify_pass&size=10&phone=true&scene=weertre"
+	//header := make(map[string]string, 1)
+	//header["Cookie"] = "wpt_env_num=test-06"
+	//resData := Util.CurlRequestGet(getAddress, header, nil)
+	//res := struct {
+	//	Code int `json:"code"`
+	//	Data struct {
+	//		Code int `json:"code"`
+	//		Data []struct {
+	//			ID    string `json:"id"`
+	//			Phone string `json:"phone"`
+	//			URI   string `json:"uri"`
+	//		} `json:"data"`
+	//		Msg string `json:"msg"`
+	//	} `json:"data"`
+	//	Msg string `json:"msg"`
+	//}{}
+	//json.Unmarshal(resData, &res)
 	//消息投递 创建数据
 	//测试写入nsq消息
 	//生产者写入nsq,10条消息，topic = "test"
-	topic := "createRankingMessage"
-	topic2 := "createRankingMessageNode2"
-	topic3 := "createRankingMessageNode3"
-	for _, v := range res.Data.Data {
-		Util.DeliveryNsq1Message(topic, []byte(v.ID))
-		Util.DeliveryNsq2Message(topic2, []byte(v.ID))
-		Util.DeliveryNsq3Message(topic3, []byte(v.ID))
-	}
-	result.Data = res
+	//topic := "createRankingMessage"
+	//topic2 := "createRankingMessageNode2"
+	//topic3 := "createRankingMessageNode3"
+	//for _, v := range res.Data.Data {
+	//	Util.DeliveryNsq1Message(topic, []byte(v.ID))
+	//	Util.DeliveryNsq2Message(topic2, []byte(v.ID))
+	//	Util.DeliveryNsq3Message(topic3, []byte(v.ID))
+	//}
+	//result.Data = res
+
+	//kafka消息推送
+	Util.SendKafkaProducerMsg("kafka-test-1", "key1", "测试消息234234")
+
 	Util.Success(ctx, result)
 }
