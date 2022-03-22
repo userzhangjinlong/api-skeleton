@@ -1,20 +1,14 @@
 package main
 
 import (
-	"api-skeleton/app/Consumer/NsqConsumer"
-	"api-skeleton/bootstrap"
-	"api-skeleton/config"
+	"api-skeleton/app/Consumer"
 	"flag"
-	"fmt"
 )
 
-var configs = config.InitConfig
-
 var (
-	nsqConsumer *NsqConsumer.Consumer
-	topic       = flag.String("T", "", "消息topic")
-	chanel      = flag.String("C", "", "消息chanel")
-	address     = fmt.Sprintf("%s:%s", configs.Nsq.Host, configs.Nsq.LookUpNode)
+	msgType = flag.String("MT", "", "消息类型")
+	topic   = flag.String("T", "", "消息topic")
+	chanel  = flag.String("C", "", "消息chanel")
 )
 
 func main() {
@@ -25,22 +19,11 @@ func main() {
 	if *chanel == "" {
 		panic("请传入C参数 消息chanel")
 	}
-	//初始化配置
-	bootstrap.InitConfig()
-	nsqConsumer = new(NsqConsumer.Consumer)
-	nsqConsumer.Address = address
-	nsqConsumer.Topic = *topic
-	nsqConsumer.Chanel = *chanel
-	//设置重连时间
-	switch *topic {
-	case "createRankingMessage":
-		nsqConsumer.CreateRankingListConsumer()
-	case "createRankingMessageNode2":
-		nsqConsumer.CreateRankingListConsumer()
-	case "createRankingMessageNode3":
-		nsqConsumer.CreateRankingListConsumer()
-	case "sendCoupon":
-		nsqConsumer.SendCouponConsumer()
+	if *msgType == "" {
+		*msgType = "nsq"
 	}
+	consumerInit := Consumer.NewMsgType(*msgType, *topic, *chanel)
+	consumerInit.InitMsgConsumer()
+	consumerInit.DistributionMsg()
 
 }

@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"github.com/Shopify/sarama"
 	"github.com/sirupsen/logrus"
+	"log"
 )
 
-func SendKafkaProducerMsg(topic string, key string, message string) (pid int32) {
+//SendKafkaProducerMsg kafka消息投递
+func SendKafkaProducerMsg(topic string, message string) (pid int32) {
 	kafkaCfg := sarama.NewConfig()
 	// 设置生产者 消息 回复等级 0 1 all
 	kafkaCfg.Producer.RequiredAcks = sarama.WaitForAll
@@ -21,8 +23,6 @@ func SendKafkaProducerMsg(topic string, key string, message string) (pid int32) 
 	// 新建一个同步生产者
 	client, err := sarama.NewSyncProducer([]string{
 		Global.Configs.Kafka.Node1,
-		//Global.Configs.Kafka.Node2,
-		//Global.Configs.Kafka.Node3,
 	}, kafkaCfg)
 
 	if err != nil {
@@ -30,14 +30,11 @@ func SendKafkaProducerMsg(topic string, key string, message string) (pid int32) 
 		return
 	}
 	defer client.Close()
-	fmt.Println(key)
 	// 定义一个生产消息，包括Topic、消息内容、
 	msg := &sarama.ProducerMessage{}
 	msg.Topic = topic
 	//msg.Key = sarama.StringEncoder(key)
 	msg.Value = sarama.StringEncoder(message)
-
-	//发送消息前判断topic是否存在 并创建
 
 	// 发送消息
 	pid, _, err = client.SendMessage(msg)
@@ -47,4 +44,20 @@ func SendKafkaProducerMsg(topic string, key string, message string) (pid int32) 
 		return
 	}
 	return
+}
+
+//KafkaConsumerClient 初始化kafka消息消费者客户端
+func KafkaConsumerClient(hosts []string, conf *sarama.Config) sarama.Consumer {
+	client, err := sarama.NewClient(hosts, conf)
+	if err != nil {
+		log.Fatalf("unable to create kafka client: %q", err)
+	}
+	consumer, err := sarama.NewConsumerFromClient(client)
+	if err != nil {
+		log.Fatal(err)
+		return nil
+	}
+	defer consumer.Close()
+
+	return consumer
 }

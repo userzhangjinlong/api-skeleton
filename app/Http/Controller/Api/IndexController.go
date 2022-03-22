@@ -88,7 +88,7 @@ func (i *Index) Index(ctx *gin.Context) {
 	//result.Data = res
 
 	//kafka消息推送
-	Util.SendKafkaProducerMsg("kafka-test-1", "key1", "测试消息234234")
+	Util.SendKafkaProducerMsg("kafka-test-1", "测试消息234234")
 
 	Util.Success(ctx, result)
 }
