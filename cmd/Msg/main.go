@@ -16,7 +16,7 @@ func main() {
 	if *topic == "" {
 		panic("请传入T参数 消息topic")
 	}
-	if *chanel == "" {
+	if *chanel == "" && *msgType != "kafka" {
 		panic("请传入C参数 消息chanel")
 	}
 	if *msgType == "" {
