@@ -39,6 +39,9 @@ api-skeleton
     
     2.声明一个nsq消费者 -T topic -C chanel
      go run cmd/Msg/main.go -T createRankingMessage -C createRankingMessage
+     
+    3.声明kafka消费者
+    go run cmd/Msg/main.go -MT kafka -T kafka-test-1 -C kafka-test-1
 ~~~
 
 - 实现功能
