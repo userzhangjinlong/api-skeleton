@@ -91,7 +91,7 @@ func (i *Index) Index(ctx *gin.Context) {
 	Util.SendKafkaProducerMsg("kafka-test-1", "测试消息234234")
 	//todo:: 异步生产消息推送待了解如何使用
 	//Util.SendKafkaSyncProducerMsg("kafka-test-2", "异步消息23423423")
-	Util.SendKafkaSyncProducerMsg1("kafka-test-2", "异步消息23423423")
+	Util.SendKafkaSyncProducerMsg("kafka-test-2", "异步消息23423423")
 
 	Util.Success(ctx, result)
 }
