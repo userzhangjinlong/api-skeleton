@@ -54,7 +54,8 @@ api-skeleton
     6.全链路追踪
     7.mysql分库集群链接，读写分离
     8.nsq消息生产消费。nsq集群
-    9.kafka消息中间件（待实现）。
+    9.kafka消息生产者和消费者。
+    10.rabbitmq消息（待实现）
 ~~~
 
 - 待优化
