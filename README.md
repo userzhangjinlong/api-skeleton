@@ -15,6 +15,7 @@ api-skeleton
 │   │	├── Controller
 │   │	├── Middleware
 │   │   └── Request
+│   ├── Libraries
 │   ├── Model
 │   ├── Logic
 │   ├── Listener
