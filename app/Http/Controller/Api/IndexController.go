@@ -88,10 +88,13 @@ func (i *Index) Index(ctx *gin.Context) {
 	//result.Data = res
 
 	//kafka消息推送
-	Util.SendKafkaProducerMsg("kafka-test-1", "测试消息234234")
+	//Util.SendKafkaProducerMsg("kafka-test-1", "测试消息234234")
 	//todo:: 异步生产消息推送待了解如何使用
 	//Util.SendKafkaSyncProducerMsg("kafka-test-2", "异步消息23423423")
-	Util.SendKafkaSyncProducerMsg("kafka-test-2", "异步消息23423423")
+	//Util.SendKafkaSyncProducerMsg("kafka-test-2", "异步消息23423423")
+
+	//rabbitmq消息推送
+	Util.SendRabbitMqMsg("testQueue", "testExchange", "这里是mq测试消息1")
 
 	Util.Success(ctx, result)
 }

@@ -56,6 +56,7 @@ api-skeleton
     8.nsq消息生产消费。nsq集群
     9.kafka消息生产者和消费者。
     10.rabbitmq消息（待实现）
+    11. gRPC&protobuf.远程过程调用（待实现）
 ~~~
 
 - 待优化

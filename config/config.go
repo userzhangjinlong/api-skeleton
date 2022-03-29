@@ -11,6 +11,7 @@ type System struct {
 	RedisCluster RedisCluster `json:"redis-cluster" ini:"redis-cluster"`
 	Nsq          Nsq          `json:"nsq" ini:"nsq"`
 	Kafka        Kafka        `json:"kafka" ini:"kafka"`
+	Rabbitmq     Rabbitmq     `json:"rabbitmq" ini:"rabbitmq"`
 }
 
 type App struct {
