@@ -46,11 +46,28 @@ func (r *RabbitMQ) ProducerMsg(msg string) {
 	q, err := r.channel.QueueDeclare(r.QueueName, false, false, false, false, nil)
 	r.recoverErr(err, "failed to declare a queue")
 
-	err = r.channel.Publish(r.Exchange, q.Name, false, false, amqp.Publishing{
+	r.channel.Publish("", q.Name, false, false, amqp.Publishing{
 		ContentType: "text/plain",
 		Body:        []byte(msg),
 	})
-	r.recoverErr(err, "failed to producer msg")
+	//r.recoverErr(err, "failed to producer msg")
+}
+
+func (r *RabbitMQ) GetSimpleConsumerMsg() (<-chan amqp.Delivery, error) {
+	_, err := r.channel.QueueDeclare(r.QueueName, false, false, false, false, nil)
+	r.recoverErr(err, "failed to declare a consumer queue")
+
+	msgs, err := r.channel.Consume(r.QueueName, "", true, false, false, false, nil)
+	r.recoverErr(err, "failed to consumer simple msg")
+
+	return msgs, nil
+
+}
+
+func (r *RabbitMQ) ConsumerSimpleMsg(handleFunc func()) {
+	forever := make(chan bool)
+	go handleFunc()
+	<-forever
 }
 
 //Destory 销毁channel和coon 链接

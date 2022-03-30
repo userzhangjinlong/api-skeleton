@@ -43,6 +43,9 @@ api-skeleton
      
     3.声明kafka消费者
     go run cmd/Msg/main.go -MT kafka -T kafka-test-1
+    
+    4.声明rabbitmq消费者
+    go run cmd/Msg/main.go -MT rabbitMq -T testQueue
 ~~~
 
 - 实现功能
@@ -56,7 +59,7 @@ api-skeleton
     7.mysql分库集群链接，读写分离
     8.nsq消息生产消费。nsq集群
     9.kafka消息生产者和消费者。
-    10.rabbitmq消息（待实现）
+    10.rabbitmq消息
     11. gRPC&protobuf.远程过程调用（待实现）
 ~~~
 
