@@ -1,0 +1,77 @@
+syntax = "proto3";// 指定proto版本
+package user;// 指定默认包名(proto文件使用的包)
+
+option go_package = "./;userRpc";// 指定golang包名
+import "google/api/annotations.proto";
+
+
+message User {
+  int64 Id = 1;
+  string Username = 2;
+  string Password = 3;
+  string Email = 4;
+  int64 Age = 5;
+  string Tel = 6;
+  string Addr = 7;
+  string Card = 8;
+  int64 CreateTime = 9;
+  int64 UpdateTime = 10;
+}
+
+message CreateUserRequest {
+  User user = 1;
+}
+
+message CreateUserResponse {
+  int64 id = 1;
+}
+
+message UpdateUserRequest {
+  User user = 1;
+}
+
+message UpdateUserResponse {
+  bool success = 1;
+}
+
+message GetUserRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message GetUserResponse {
+  User user = 1;
+}
+
+message DelUserRequest {
+  int64 id = 1;
+}
+
+message DelUserResponse {
+  bool success = 1;
+}
+
+service UserService {
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
+    option(google.api.http) = {
+      post:"/v1/createUser"
+      body:"*"
+    };
+  };
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
+    option(google.api.http) = {
+      post:"/v1/updateUser"
+      body:"*"
+    };
+  };
+  rpc GetUser(GetUserRequest) returns (GetUserResponse) {
+    option(google.api.http) = {
+      get:"/v1/getUser"
+    };
+  };
+  rpc DelUser(DelUserRequest) returns (DelUserResponse) {
+    option(google.api.http) = {
+      get:"/v1/delUser"
+    };
+  };
+}
