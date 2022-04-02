@@ -14,6 +14,9 @@ import (
 	"net"
 )
 
+/**
+grpc 服务端
+*/
 func main() {
 	bootstrap.InitConfig()
 	bootstrap.InitDB()

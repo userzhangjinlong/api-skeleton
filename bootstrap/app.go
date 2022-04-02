@@ -39,6 +39,16 @@ func (s *Server) Start() {
 	//设置受信任代理,如果不设置默认信任所有代理，不安全
 	engine.SetTrustedProxies([]string{configs.Proxy.TrustProxy})
 
-	//启动引擎
+	//todo::待实现grpc实现的http接口路由注入到gin里面
+	//mux := runtime.NewServeMux()
+	//ctx := context.Background()
+	//opts := []grpc.DialOption{grpc.WithInsecure()}
+	//err := ImMsgRpc.RegisterImMsgServiceHandlerFromEndpoint(ctx, mux, "127.0.0.1"+configs.Proxy.Port, opts)
+	//if err != nil {
+	//	log.Fatalf("grpc 启动 HTTP 网关错误: %v", err)
+	//}
+	//ImMsgRpc.RegisterImMsgServiceHandlerFromEndpoint(ctx, mux, "127.0.0.1:"+grpcPort, opts)
+
+	//启动gin http引擎
 	engine.Run(configs.Proxy.Port)
 }
