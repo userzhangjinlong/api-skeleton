@@ -41,8 +41,8 @@ service ServiceManager {
   option (google.api.oauth_scopes) =
       "https://www.googleapis.com/auth/cloud-platform,"
       "https://www.googleapis.com/auth/cloud-platform.read-only,"
-      "https://www.googleapis.com/auth/service.management,"
-      "https://www.googleapis.com/auth/service.management.readonly";
+      "https://www.googleapis.com/auth/Service.management,"
+      "https://www.googleapis.com/auth/Service.management.readonly";
 
   // Lists managed services.
   //
@@ -76,9 +76,9 @@ service ServiceManager {
   rpc CreateService(CreateServiceRequest) returns (google.longrunning.Operation) {
     option (google.api.http) = {
       post: "/v1/services"
-      body: "service"
+      body: "Service"
     };
-    option (google.api.method_signature) = "service";
+    option (google.api.method_signature) = "Service";
     option (google.longrunning.operation_info) = {
       response_type: "google.api.servicemanagement.v1.ManagedService"
       metadata_type: "google.api.servicemanagement.v1.OperationMetadata"

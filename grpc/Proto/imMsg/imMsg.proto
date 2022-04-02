@@ -1,0 +1,51 @@
+syntax="proto3";
+package ImMsg;
+
+option go_package = "./;ImMsgRpc";// 指定golang包名
+import "google/api/annotations.proto";
+
+message ImMsg {
+  uint64 Id = 1;
+  uint64 FormUserId = 2;
+  uint64 ToUserId = 3;
+  string Content = 4;
+  string MsgImg = 5;
+  uint64 SendTime = 6;
+  uint64 CreateTime = 7;
+  uint64 UpdateTime = 8;
+}
+
+message CreateMsgRequest {
+  ImMsg imMsg = 1;
+}
+
+message CreateMsgResponse {
+  bool success = 1;
+}
+
+message GetMsgRequest {
+    uint64 formUserId = 1;
+    uint64 toUserId = 2;
+    uint64 pageSize = 3;
+    uint64 pageNum = 4;
+}
+
+message GetMsgResponse {
+    uint64 pageSize = 1;
+    uint64 pageNum = 2;
+    repeated ImMsg imMsg = 3;
+}
+
+service ImMsgService {
+  rpc CreateMsg(CreateMsgRequest) returns (CreateMsgResponse) {
+    option(google.api.http) = {
+        post:"/v1/createMsg"
+        body:"*"
+    };
+  };
+  rpc GetMsg(GetMsgRequest) returns (GetMsgResponse) {
+    option(google.api.http) = {
+        get:"/v1/getMsg"
+    };
+  };
+}

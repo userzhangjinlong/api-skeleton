@@ -26,5 +26,4 @@ func Error(ctx *gin.Context, errCode int, msg string) {
 	response := Response{Code: errCode, Message: msg}
 	ctx.JSON(http.StatusOK, response)
 	ctx.Abort()
-	return
 }

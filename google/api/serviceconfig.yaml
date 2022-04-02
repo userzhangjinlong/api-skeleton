@@ -23,4 +23,4 @@ enums:
 - name: google.api.FieldBehavior
 
 documentation:
-  summary: Lets you define and config your API service.
+  summary: Lets you define and config your API Service.

@@ -1,7 +1,7 @@
 syntax = "proto3";// 指定proto版本
 package user;// 指定默认包名(proto文件使用的包)
 
-option go_package = "./;userRpc";// 指定golang包名
+option go_package = "./;UserRpc";// 指定golang包名
 import "google/api/annotations.proto";
 
 

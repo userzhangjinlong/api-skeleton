@@ -164,7 +164,7 @@ documentation:
       checking. This operation may "fail open" without warning.
 
   - selector: google.longrunning.Operations.ListOperations
-    description: Lists service operations that match the specified filter in the request.
+    description: Lists Service operations that match the specified filter in the request.
 
 backend:
   rules:

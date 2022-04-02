@@ -29,16 +29,16 @@ type User struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id         int64  `protobuf:"varint,1,opt,name=Id,proto3" json:"Id,omitempty"`
-	Username   string `protobuf:"bytes,2,opt,name=Username,proto3" json:"Username,omitempty"`
-	Password   string `protobuf:"bytes,3,opt,name=Password,proto3" json:"Password,omitempty"`
-	Email      string `protobuf:"bytes,4,opt,name=Email,proto3" json:"Email,omitempty"`
-	Age        int64  `protobuf:"varint,5,opt,name=Age,proto3" json:"Age,omitempty"`
-	Tel        string `protobuf:"bytes,6,opt,name=Tel,proto3" json:"Tel,omitempty"`
-	Addr       string `protobuf:"bytes,7,opt,name=Addr,proto3" json:"Addr,omitempty"`
-	Card       string `protobuf:"bytes,8,opt,name=Card,proto3" json:"Card,omitempty"`
-	CreateTime int64  `protobuf:"varint,9,opt,name=CreateTime,proto3" json:"CreateTime,omitempty"`
-	UpdateTime int64  `protobuf:"varint,10,opt,name=UpdateTime,proto3" json:"UpdateTime,omitempty"`
+	Id         int64  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Username   string `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	Password   string `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
+	Email      string `protobuf:"bytes,4,opt,name=email,proto3" json:"email,omitempty"`
+	Age        int64  `protobuf:"varint,5,opt,name=age,proto3" json:"age,omitempty"`
+	Tel        string `protobuf:"bytes,6,opt,name=tel,proto3" json:"tel,omitempty"`
+	Addr       string `protobuf:"bytes,7,opt,name=addr,proto3" json:"addr,omitempty"`
+	Card       string `protobuf:"bytes,8,opt,name=card,proto3" json:"card,omitempty"`
+	CreateTime int64  `protobuf:"varint,9,opt,name=createTime,proto3" json:"createTime,omitempty"`
+	UpdateTime int64  `protobuf:"varint,10,opt,name=updateTime,proto3" json:"updateTime,omitempty"`
 }
 
 func (x *User) Reset() {
@@ -778,7 +778,7 @@ var _ grpc.ClientConnInterface
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion6
 
-// UserServiceClient is the client API for UserService service.
+// UserServiceClient is the client API for UserService Service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type UserServiceClient interface {
@@ -832,7 +832,7 @@ func (c *userServiceClient) DelUser(ctx context.Context, in *DelUserRequest, opt
 	return out, nil
 }
 
-// UserServiceServer is the server API for UserService service.
+// UserServiceServer is the server API for UserService Service.
 type UserServiceServer interface {
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)

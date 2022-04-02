@@ -3,7 +3,6 @@ package MysqlCommand
 import (
 	"api-skeleton/app/ConstDir"
 	"api-skeleton/app/Global"
-	"fmt"
 	"gorm.io/plugin/dbresolver"
 )
 
@@ -49,8 +48,6 @@ func (m *DBModel) GetColumns(tableSchema string, tableName string) []*TableColum
 	//err := Global.DB.
 	//	Raw(query, tableSchema, tableName).Scan(&results).Error
 
-	fmt.Println("results结果", results)
-	fmt.Println("异常信息：", err)
 	if err != nil {
 		return nil
 	}
