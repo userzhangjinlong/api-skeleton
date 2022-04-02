@@ -33,7 +33,7 @@ api-skeleton
 └── test 
 ~~~
 
-#grpc&protobuf
+# grpc&protobuf
 - 安装
 ***
 Grpc
@@ -67,7 +67,7 @@ protobuf
     3.定义自己的service或者其他之类的想命名的文件，实现service里的rpc，就可以开始愉快的进行rpc交互开发啦
 ~~~
 
-#常用组件工具
+# 常用组件工具
 ~~~
     1.生成表结构model struct 到app/Model/库名称/表名称.go文件
     go run cmd/Cli/main.go sql struct --schema=生产库名称 --table=生成表名称
@@ -82,7 +82,7 @@ protobuf
     go run cmd/Msg/main.go -MT rabbitMq -T testQueue
 ~~~
 
-#实现功能
+# 实现功能
 ~~~
     1.cobra命令行脚本
     2.redis连接、redis-cluster集群
@@ -96,7 +96,7 @@ protobuf
     10.rabbitmq消息
     11. gRPC&protobuf.远程过程调用（待实现）
 ~~~
-##待优化
+## 待优化
 ~~~
     1.路由传递 （考虑使用闭包函数切路由）
     2.路由中间件分组
