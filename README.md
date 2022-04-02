@@ -58,7 +58,7 @@ protobuf
 ~~~
     坑点：
         - 容易出现 google/api/annotations.proto not found问题，需要google/api下载到本地$PATH/src,idea导入
-        ![](img.png)
+        ![image](https://github.com/userzhangjinlong/Document-Base/blob/master/img.png)
     1 生成pb .go 定义proto文件生成是不需要引入google/api/annotations.proto 和response的 option
     对应proto指定 protoc --go_out=plugins=grpc:. user.proto
     2.pb.gw.go->定义生成需要引入google/api/annotations.proto 和response的 option
