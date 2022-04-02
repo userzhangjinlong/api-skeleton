@@ -52,13 +52,15 @@ protobuf
     初始化protoc-gen-go到$GOROOT/bin目录
     go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway@latest
 ~~~
-
 ***
 - 使用
 ~~~
     坑点：
         - 容易出现 google/api/annotations.proto not found问题，需要google/api下载到本地$PATH/src,idea导入
-        ![image](https://github.com/userzhangjinlong/Document-Base/blob/master/img.png)
+~~~
+![image](https://github.com/userzhangjinlong/Document-Base/blob/master/img.png)
+~~~
+    生成方法：
     1 生成pb .go 定义proto文件生成是不需要引入google/api/annotations.proto 和response的 option
     对应proto指定 protoc --go_out=plugins=grpc:. user.proto
     2.pb.gw.go->定义生成需要引入google/api/annotations.proto 和response的 option
