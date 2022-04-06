@@ -2,9 +2,13 @@ package Api
 
 import (
 	"api-skeleton/app/Cache"
+	"api-skeleton/app/Ecode"
 	"api-skeleton/app/Global"
 	"api-skeleton/app/Model/ApiSkeleton"
 	"api-skeleton/app/Util"
+	ImMsgRpc "api-skeleton/grpc/Proto/imMsg"
+	UserRpc "api-skeleton/grpc/Proto/user"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -97,29 +101,29 @@ func (i *Index) Index(ctx *gin.Context) {
 	//Util.SendRabbitMqMsg("testQueue", "testExchange", "这里是mq测试消息1")
 
 	//grpc inside调用
-	//rpcClientConn, err := Util.GrpcClientConn()
-	//defer rpcClientConn.Close()
-	//if err != nil {
-	//	Util.Error(ctx,
-	//		Ecode.ServiceErrorCode.Code,
-	//		fmt.Sprintf("grpc 内部链接获取异常：%s", err))
-	//}
-	//
-	////用户服务调用
-	//userRpcClient := UserRpc.NewUserServiceClient(rpcClientConn)
-	//userReq := UserRpc.GetUserRequest{Username: "123", Password: "4667"}
-	//resp, reqErr := userRpcClient.GetUser(ctx, &userReq)
-	//if reqErr != nil {
-	//	Util.Error(ctx,
-	//		Ecode.ServiceErrorCode.Code,
-	//		fmt.Sprintf("grpc inside curl get user error：%s", reqErr))
-	//	return
-	//}
-	////im服务调用
-	//ImMsgRpcClient := ImMsgRpc.NewImMsgServiceClient(rpcClientConn)
-	//ImgMsgReq := ImMsgRpc.GetMsgRequest{FormUserId: 1, ToUserId: 2, PageSize: 20, PageNum: 1}
-	//resIm, _ := ImMsgRpcClient.GetMsg(ctx, &ImgMsgReq)
-	//fmt.Printf("返回的resIm,err:%v", resIm)
-	//result.Data = resp
+	rpcClientConn, err := Util.GrpcClientConn()
+	defer rpcClientConn.Close()
+	if err != nil {
+		Util.Error(ctx,
+			Ecode.ServiceErrorCode.Code,
+			fmt.Sprintf("grpc 内部链接获取异常：%s", err))
+	}
+
+	//用户服务调用
+	userRpcClient := UserRpc.NewUserServiceClient(rpcClientConn)
+	userReq := UserRpc.GetUserRequest{Username: "123", Password: "4667"}
+	resp, reqErr := userRpcClient.GetUser(ctx, &userReq)
+	if reqErr != nil {
+		Util.Error(ctx,
+			Ecode.ServiceErrorCode.Code,
+			fmt.Sprintf("grpc inside curl get user error：%s", reqErr))
+		return
+	}
+	//im服务调用
+	ImMsgRpcClient := ImMsgRpc.NewImMsgServiceClient(rpcClientConn)
+	ImgMsgReq := ImMsgRpc.GetMsgRequest{FormUserId: 1, ToUserId: 2, PageSize: 20, PageNum: 1}
+	resIm, _ := ImMsgRpcClient.GetMsg(ctx, &ImgMsgReq)
+	fmt.Printf("返回的resIm,err:%v", resIm)
+	result.Data = resp
 	Util.Success(ctx, result)
 }

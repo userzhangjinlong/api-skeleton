@@ -22,6 +22,7 @@ func GrpcClientConn() (*grpc.ClientConn, error) {
 
 //getClientCoon 获取地址封装
 func getClientCoon(ctx context.Context, addr string, opts []grpc.DialOption) (*grpc.ClientConn, error) {
+	//WithInsecure 禁用传输安全性tls认证
 	opts = append(opts, grpc.WithInsecure())
 	return grpc.DialContext(ctx, addr, opts...)
 }

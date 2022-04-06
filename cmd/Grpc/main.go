@@ -15,7 +15,7 @@ import (
 )
 
 /**
-grpc 服务端
+Grpc 服务端
 */
 func main() {
 	bootstrap.InitConfig()

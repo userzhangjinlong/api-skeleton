@@ -16,5 +16,16 @@ func (i *ImMsgServiceServer) CreateMsg(ctx context.Context, req *ImMsgRpc.Create
 
 func (i *ImMsgServiceServer) GetMsg(ctx context.Context, req *ImMsgRpc.GetMsgRequest) (res *ImMsgRpc.GetMsgResponse, err error) {
 	fmt.Printf("查看走到这里的ctx是什么：%v", ctx)
-	return nil, errors.New("test")
+	var imRes = make([]*ImMsgRpc.ImMsg, 0)
+	imRes = append(imRes, &ImMsgRpc.ImMsg{
+		Id:         1,
+		ToUserId:   2,
+		FormUserId: 3,
+		Content:    "23e234",
+		MsgImg:     "4355234",
+		SendTime:   123,
+		CreateTime: 234,
+		UpdateTime: 67768,
+	})
+	return &ImMsgRpc.GetMsgResponse{ImMsg: imRes, PageNum: 1, PageSize: 10}, nil
 }

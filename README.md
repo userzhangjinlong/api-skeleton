@@ -110,4 +110,5 @@ protobuf
     4.nsq消息消费幂等，消息体代码修改重置消息平滑重启ack等问题的整理处理
     5.匿名结构体嵌套 模拟实现继承
     6.gRPC实现的http接口增加注入到gin中，绑定统一端口统一访问实现
+    7.确认logrus 日志落盘 goroutine、channel异步的去记录日志和上报es
 ~~~
