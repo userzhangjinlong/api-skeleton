@@ -15,7 +15,7 @@ func (i *ImMsgServiceServer) CreateMsg(ctx context.Context, req *ImMsgRpc.Create
 }
 
 func (i *ImMsgServiceServer) GetMsg(ctx context.Context, req *ImMsgRpc.GetMsgRequest) (res *ImMsgRpc.GetMsgResponse, err error) {
-	fmt.Printf("查看走到这里的ctx是什么：%v", ctx)
+	fmt.Println("我接通啦")
 	var imRes = make([]*ImMsgRpc.ImMsg, 0)
 	imRes = append(imRes, &ImMsgRpc.ImMsg{
 		Id:         1,

@@ -7,7 +7,6 @@ import (
 	"api-skeleton/app/Model/ApiSkeleton"
 	"api-skeleton/app/Util"
 	ImMsgRpc "api-skeleton/grpc/Proto/imMsg"
-	UserRpc "api-skeleton/grpc/Proto/user"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -110,20 +109,20 @@ func (i *Index) Index(ctx *gin.Context) {
 	}
 
 	//用户服务调用
-	userRpcClient := UserRpc.NewUserServiceClient(rpcClientConn)
-	userReq := UserRpc.GetUserRequest{Username: "123", Password: "4667"}
-	resp, reqErr := userRpcClient.GetUser(ctx, &userReq)
-	if reqErr != nil {
-		Util.Error(ctx,
-			Ecode.ServiceErrorCode.Code,
-			fmt.Sprintf("grpc inside curl get user error：%s", reqErr))
-		return
-	}
+	//userRpcClient := UserRpc.NewUserServiceClient(rpcClientConn)
+	//userReq := UserRpc.GetUserRequest{Username: "123", Password: "4667"}
+	//resp, reqErr := userRpcClient.GetUser(ctx, &userReq)
+	//if reqErr != nil {
+	//	Util.Error(ctx,
+	//		Ecode.ServiceErrorCode.Code,
+	//		fmt.Sprintf("grpc inside curl get user error：%s", reqErr))
+	//	return
+	//}
 	//im服务调用
 	ImMsgRpcClient := ImMsgRpc.NewImMsgServiceClient(rpcClientConn)
 	ImgMsgReq := ImMsgRpc.GetMsgRequest{FormUserId: 1, ToUserId: 2, PageSize: 20, PageNum: 1}
 	resIm, _ := ImMsgRpcClient.GetMsg(ctx, &ImgMsgReq)
 	fmt.Printf("返回的resIm,err:%v", resIm)
-	result.Data = resp
+	result.Data = resIm
 	Util.Success(ctx, result)
 }
