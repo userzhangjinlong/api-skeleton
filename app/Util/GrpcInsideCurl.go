@@ -8,6 +8,7 @@ import (
 )
 
 //GrpcClientConn inside内部调用获取grpc 客户端链接
+//todo::单列的去实现创建客户端，防止无止境的开启客户端造成memory溢出 gorutinue等问题
 func GrpcClientConn() (*grpc.ClientConn, error) {
 	ctx := context.Background()
 	clientConn, err := getClientCoon(ctx,
