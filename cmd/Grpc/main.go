@@ -10,8 +10,11 @@ import (
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/reflection"
 	"net/http"
+	"os"
+	"path"
 	"strings"
 )
 
@@ -34,7 +37,17 @@ func main() {
 
 //runGrpcServer 启动注册grpc服务
 func runGrpcServer() *grpc.Server {
-	grpcServer := grpc.NewServer()
+	//Grpc 新增Tls配置
+	dir, _ := os.Getwd()
+	severPemPath := path.Dir(dir+"/grpc/Keys/") + "/servers.pem"
+	severKeyPath := path.Dir(dir+"/grpc/Keys/") + "/servers.key"
+	cred, err := credentials.
+		NewServerTLSFromFile(severPemPath, severKeyPath)
+	if err != nil {
+		panic(fmt.Sprintf("配置Tls启动rpc 服务端异常：%s", err))
+	}
+
+	grpcServer := grpc.NewServer(grpc.Creds(cred))
 	GrpcRoutes.RegisterGrpcServer(grpcServer)
 	reflection.Register(grpcServer)
 
@@ -56,7 +69,20 @@ func runGrpcGatewayServer() *runtime.ServeMux {
 	ctx := context.Background()
 	endpoint := fmt.Sprintf("%s:%s", Global.Configs.Grpc.Host, Global.Configs.Grpc.Port)
 	gwmux := runtime.NewServeMux()
-	dopts := []grpc.DialOption{grpc.WithInsecure()}
+
+	dir, _ := os.Getwd()
+	severPemPath := path.Dir(dir+"/grpc/Keys/") + "/servers.pem"
+	//serverName 生产pem文件是定义的服务名称
+	cred, err := credentials.
+		NewClientTLSFromFile(severPemPath, endpoint)
+	if err != nil {
+		panic(fmt.Sprintf("配置Tls启动rpc 客户端异常：%s", err))
+	}
+	//todo::本地localhost 是否无法支持tls 类似ssl
+	dopts := []grpc.DialOption{
+		grpc.WithInsecure(),
+		grpc.WithTransportCredentials(cred),
+	}
 	//绑定grpc http路由
 	GrpcRoutes.RegisterGrpcClient(ctx, gwmux, endpoint, dopts)
 

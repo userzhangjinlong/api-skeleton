@@ -3,6 +3,9 @@ package Util
 import (
 	"fmt"
 	"os"
+	"os/exec"
+	"path/filepath"
+	"strings"
 )
 
 //CreateIfNotExistDir 创建目录
@@ -41,4 +44,13 @@ func PathExists(path string) (bool, error) {
 		return false, nil
 	}
 	return false, err
+}
+
+//GetCurrPath 获取当前执行的绝对路径
+func GetCurrPath() string {
+	file, _ := exec.LookPath(os.Args[0])
+	path, _ := filepath.Abs(file)
+	index := strings.LastIndex(path, string(os.PathSeparator))
+	ret := path[:index]
+	return ret
 }
