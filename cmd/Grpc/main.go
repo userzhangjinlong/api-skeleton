@@ -88,6 +88,7 @@ func runGrpcGatewayServer() *runtime.ServeMux {
 
 	dopts := []grpc.DialOption{
 		grpc.WithInsecure(), //忽略tls认证
+		//grpc.WithTimeout(time.Second * 3),
 		//grpc.WithTransportCredentials(cred),//开启tls认证
 	}
 	//绑定grpc http路由

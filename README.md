@@ -111,7 +111,7 @@ protobuf
     9.kafka消息生产者和消费者。
     10.rabbitmq消息
     11. gRPC&protobuf.远程过程调用，grpc与http同端口双流量支持
-    12.8.grpc服务tls认证、（待实现）swagger接口文档新增、拦截器go-grpc-middleware新增（类似中间件）、metadata鉴权认证、rpc服务客户端超时设置
+    12.etcd（待实现）
 ~~~
 ## 待优化
 ~~~
@@ -123,5 +123,5 @@ protobuf
     5.匿名结构体嵌套 模拟实现继承
     6.gRPC实现的http接口增加注入到gin中，绑定统一端口统一访问实现
     7.确认logrus 日志落盘 goroutine、channel异步的去记录日志和上报es
-    
+    8.grpc服务tls认证、（待实现）swagger接口文档新增、拦截器go-grpc-middleware新增（类似中间件）、metadata鉴权认证、rpc服务客户端超时设置
 ~~~
