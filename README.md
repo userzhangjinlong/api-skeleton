@@ -53,6 +53,17 @@ protobuf
     go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway@latest
 ~~~
 ***
+~~~
+    ###生成对应的pem证书文件
+    openssl genrsa -out ca.key 4096
+    openssl req -new -sha256 -out ca.csr -key ca.key -config ca.conf
+    openssl x509 -req -days 3650 -in ca.csr -signkey ca.key -out ca.crt
+    openssl genrsa -out server.key 2048
+    openssl req -new -sha256 -out server.csr -key server.key -config server.conf
+    openssl x509 -req -days 3650 -CA ca.crt -CAkey ca.key -CAcreateserial -in server.csr -out server.pem -extensions req_ext -extfile server.conf
+    ps:还是会生产浏览器不受信任的证书；localhost调用需要chrome手动输入thisisunsafe 信任，通过联调
+~~~
+***
 - 使用
 ~~~
     坑点：
@@ -100,7 +111,7 @@ protobuf
     9.kafka消息生产者和消费者。
     10.rabbitmq消息
     11. gRPC&protobuf.远程过程调用，grpc与http同端口双流量支持
-    12.8.grpc服务tls认证、swagger接口文档新增、拦截器go-grpc-middleware新增（类似中间件）、metadata鉴权认证、rpc服务客户端超时设置（待实现）
+    12.8.grpc服务tls认证、（待实现）swagger接口文档新增、拦截器go-grpc-middleware新增（类似中间件）、metadata鉴权认证、rpc服务客户端超时设置
 ~~~
 ## 待优化
 ~~~
