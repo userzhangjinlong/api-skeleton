@@ -68,6 +68,7 @@ protobuf
 - 使用
 ~~~
     坑点：
+        - protoc-gen-go版本会引起etcdv3客户端安装异常，指定版本1.26即可
         - 容易出现 google/api/annotations.proto not found问题，需要google/api下载到本地$PATH/src,idea导入
 ~~~
 ![image](https://github.com/userzhangjinlong/Document-Base/blob/master/img.png)
