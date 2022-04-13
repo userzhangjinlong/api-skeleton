@@ -48,7 +48,8 @@ protobuf
 ~~~
     ###仅仅针对macOs 其他环境自行科学搜索参照流程
     brew install protobuf
-    go install github.com/golang/protobuf/protoc-gen-go@latest
+    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1
+    go install github.com/golang/protobuf/protoc-gen-go@v1.26
     初始化protoc-gen-go到$GOROOT/bin目录
     go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway@latest
 ~~~
@@ -111,7 +112,7 @@ protobuf
     9.kafka消息生产者和消费者。
     10.rabbitmq消息
     11. gRPC&protobuf.远程过程调用，grpc与http同端口双流量支持
-    12.etcd（待实现）
+    12.etcd 配置共享（待实现）
 ~~~
 ## 待优化
 ~~~
