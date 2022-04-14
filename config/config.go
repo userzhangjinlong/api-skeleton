@@ -13,6 +13,7 @@ type System struct {
 	Kafka        Kafka        `json:"kafka" ini:"kafka"`
 	Rabbitmq     Rabbitmq     `json:"rabbitmq" ini:"rabbitmq"`
 	Grpc         Grpc         `json:"grpc" ini:"grpc"`
+	Etcd         Etcd         `json:"etcd" ini:"etcd"`
 }
 
 type App struct {

@@ -49,6 +49,7 @@ func (i *Index) Index(ctx *gin.Context) {
 	}).Info("测试日志写入12")
 	result := struct {
 		Val       string      `json:"vals"`
+		EtcdVal   string      `json:"etcdVals"`
 		LoginInfo interface{} `json:"userinfo"`
 		User      interface{} `json:"user"`
 		Data      interface{} `json:"data"`
@@ -124,5 +125,9 @@ func (i *Index) Index(ctx *gin.Context) {
 	resIm, _ := ImMsgRpcClient.GetMsg(ctx, &ImgMsgReq)
 	fmt.Printf("返回的resIm,err:%v", resIm)
 	result.Data = resIm
+	//etcd调试
+	Util.SetEtcdConf("test", "setEtcdTestVal")
+	valEtcd, _ := Util.GetEtcdConf("test")
+	result.EtcdVal = valEtcd
 	Util.Success(ctx, result)
 }
