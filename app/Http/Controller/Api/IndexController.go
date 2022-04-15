@@ -126,8 +126,8 @@ func (i *Index) Index(ctx *gin.Context) {
 	fmt.Printf("返回的resIm,err:%v", resIm)
 	result.Data = resIm
 	//etcd调试
-	Util.SetEtcdConf("test", "setEtcdTestVal")
-	valEtcd, _ := Util.GetEtcdConf("test")
+	Util.SetEtcdConf("keyTest", "setEtcdTestVal")
+	valEtcd, _ := Util.GetEtcdConf("keyTest")
 	result.EtcdVal = valEtcd
 	Util.Success(ctx, result)
 }

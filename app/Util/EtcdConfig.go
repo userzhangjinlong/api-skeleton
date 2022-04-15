@@ -21,6 +21,9 @@ func GetEtcdCli() (cli *clientv3.Client, err error) {
 	cli, err = clientv3.New(clientv3.Config{
 		Endpoints:   endPoints,
 		DialTimeout: 5 * time.Second,
+		//etcd客户端账号密码配置
+		//Username: "admin",
+		//Password: "123457",
 	})
 
 	if err != nil {
