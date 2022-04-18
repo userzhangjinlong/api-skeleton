@@ -1,10 +1,11 @@
 package Request
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
+	"github.com/sirupsen/logrus"
 	"strings"
 )
 
@@ -32,7 +33,16 @@ func (v ValidErrors) Errors() []string {
 	return errs
 }
 
+func registerValidation(tag string, fn validator.Func) {
+	validateObj := validator.New()
+	if err := validateObj.RegisterValidation(tag, fn); err != nil {
+		logrus.Fatalf("register validator for '%s' error: %v", tag, err)
+	}
+}
+
+//BindAndValid ShouldBind和验证
 func BindAndValid(ctx *gin.Context, v interface{}) (bool, ValidErrors) {
+	registerCustomRules()
 	var errs ValidErrors
 	err := ctx.ShouldBind(v)
 	if err != nil {
@@ -44,7 +54,6 @@ func BindAndValid(ctx *gin.Context, v interface{}) (bool, ValidErrors) {
 		}
 
 		for key, value := range verrs.Translate(trans) {
-			fmt.Printf("key:%s, val:%s", key, value)
 			errs = append(errs, &ValidError{
 				Key:     key,
 				Message: value,
@@ -55,4 +64,12 @@ func BindAndValid(ctx *gin.Context, v interface{}) (bool, ValidErrors) {
 	}
 
 	return true, nil
+}
+
+//registerCustomRules 绑定自定义规则
+func registerCustomRules() {
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		//绑定自定义规则
+		v.RegisterValidation("regPhone", regPhone)
+	}
 }

@@ -1,6 +1,7 @@
 package Api
 
 import (
+	"api-skeleton/app/Ecode"
 	"api-skeleton/app/Global"
 	"api-skeleton/app/Http/Request"
 	"api-skeleton/app/Model/ApiSkeleton"
@@ -17,27 +18,29 @@ import (
 type Login struct {
 }
 
+//Login 登陆注册
 func (l *Login) Login(ctx *gin.Context) {
 	//参数校验
 	param := struct {
-		Username string `form:"username" binding:"required"`
+		Username string `form:"username" binding:"required,regPhone"`
 		Password string `form:"password" binding:"required,min=6"`
 	}{}
 	valid, errs := Request.BindAndValid(ctx, &param)
 	if !valid {
-		Util.Error(ctx, 100, fmt.Sprintf("参数错误：%s", errs))
+		Util.Error(ctx, Ecode.ParamErrCode.Code, fmt.Sprintf("参数错误：%s", errs))
+		return
 	}
 
 	//数据表查询用户不存在则创建用户
 	var userModel ApiSkeleton.User
-	err := Global.DB.Where("tel = ? and password = ?", param.Username, param.Password).Find(&userModel).Error
-	if errors.Is(err, gorm.ErrRecordNotFound) {
+	err := Global.DB.
+		Where("tel = ? and password = ?", param.Username, Util.Md5Encryption(param.Password)).
+		Find(&userModel).Error
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
 		//数据不存在新增数据
 		userModel.Tel = param.Username
 		userModel.Username = param.Username
-		userModel.Password = param.Password
-		userModel.CreateTime = time.Now().Unix()
-		userModel.UpdateTime = time.Now().Unix()
+		userModel.Password = Util.Md5Encryption(param.Password)
 		err = Global.DB.Create(&userModel).Error
 		if err != nil {
 			Util.Error(ctx, 100, fmt.Sprintf("登陆失败：%s", err))

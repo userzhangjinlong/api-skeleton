@@ -10,11 +10,15 @@ import (
 
 const databaseTpl = `package {{.DatabaseName}}
 
+import "api-skeleton/app/Model"
+
 type {{.TableName | index}} struct {
  {{range.Column}} {{$length := len .Comment}} {{if gt $length 0}}
 	//{{.Comment}}  {{else}} // {{.Name}} {{ end }}
 	{{$typeLen := len .Type}} {{ if gt $typeLen 0}}{{.Name | index}} {{.Type}} {{.Tag}} {{else}} {{.Name}} {{end}}
 {{end}}
+	//继承父类model
+	Model.Model
 }
 
 func (model *{{.TableName | index}}) TableName() string {
@@ -48,15 +52,19 @@ func NewDatabaseTemplate() *DatabaseTemplate {
 //AssemblyColumns 格式化获取到的字段输出模板内容
 func (db *DatabaseTemplate) AssemblyColumns(tbColumns []*TableColumn) []*DatabaseColumn {
 	tplColumns := make([]*DatabaseColumn, 0, len(tbColumns))
-
+	fmt.Println("表中字段")
 	for _, column := range tbColumns {
-		tag := fmt.Sprintf("`"+"gorm:"+"\"%s\""+" "+"json:"+"\"%s\""+"`", column.ColumnName, column.ColumnName)
-		tplColumns = append(tplColumns, &DatabaseColumn{
-			Name:    column.ColumnName,
-			Type:    DBTypeToStructType[column.DataType],
-			Tag:     tag,
-			Comment: column.ColumnComment,
-		})
+		fmt.Println(Util.InArray(column.ColumnName, []string{"createTime", "updateTime"}))
+		if !Util.InArray(column.ColumnName, []string{"createtime", "updatetime"}) {
+			tag := fmt.Sprintf("`"+"gorm:"+"\"%s\""+" "+"json:"+"\"%s\""+"`", column.ColumnName, column.ColumnName)
+			tplColumns = append(tplColumns, &DatabaseColumn{
+				Name:    column.ColumnName,
+				Type:    DBTypeToStructType[column.DataType],
+				Tag:     tag,
+				Comment: column.ColumnComment,
+			})
+		}
+
 	}
 
 	return tplColumns

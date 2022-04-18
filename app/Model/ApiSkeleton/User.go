@@ -1,5 +1,7 @@
 package ApiSkeleton
 
+import "api-skeleton/app/Model"
+
 type User struct {
 
 	//用户编号
@@ -26,11 +28,8 @@ type User struct {
 	//身份证号
 	Card string `gorm:"column:card" json:"card"`
 
-	//创建时间
-	CreateTime int64 `gorm:"column:createTime" json:"createTime"`
-
-	//更新时间
-	UpdateTime int64 `gorm:"column:updateTime" json:"updateTime"`
+	//继承父类model
+	Model.Model
 }
 
 func (model *User) TableName() string {

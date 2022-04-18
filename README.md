@@ -114,7 +114,8 @@ protobuf
     10.rabbitmq消息
     11. gRPC&protobuf.远程过程调用，grpc与http同端口双流量支持
     12.etcd 配置共享
-    13.建议IM实现
+    13.IM实现 （待实现）
+    14.es链接日志上报，搜索等（待实现）
 ~~~
 ## 待优化
 ~~~

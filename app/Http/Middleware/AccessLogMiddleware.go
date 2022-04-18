@@ -1,6 +1,8 @@
 package Middleware
 
 import (
+	"api-skeleton/app/Ecode"
+	"api-skeleton/app/Util"
 	"bytes"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -24,6 +26,17 @@ func (acs AccessLogWriter) Write(p []byte) (int, error) {
 //AccessLog 访问日志中间件
 func AccessLog() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		//系统级别异常捕获
+		defer func() {
+			if err := recover(); err != nil {
+				//记录异常调用栈信息
+				logrus.WithFields(logrus.Fields{
+					"stack": Util.PanicTrace(err),
+					"err":   err,
+				}).Error("致命异常")
+				Util.Error(ctx, Ecode.ServiceErrorCode.Code, Ecode.ServiceErrorCode.Message)
+			}
+		}()
 		bodyWriter := &AccessLogWriter{
 			body:           bytes.NewBufferString(""),
 			ResponseWriter: ctx.Writer,
@@ -55,5 +68,6 @@ func AccessLog() gin.HandlerFunc {
 			traceID,
 			spanID,
 		)
+
 	}
 }

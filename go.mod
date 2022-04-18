@@ -77,6 +77,7 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/genproto v0.0.0-20220407144326-9054f6ed7bac // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
+	nhooyr.io/websocket v1.8.7 // indirect
 )
 
 replace google.golang.org/grpc => google.golang.org/grpc v1.26.0
