@@ -24,7 +24,7 @@ type Database struct {
 	Charset      string `mapstructure:"charset" json:"charset" ini:"charset"`
 	MaxIdleConns string `mapstructure:"maxidleconns" json:"maxidleconns" ini:"maxidleconns"`
 	MaxOpenConns string `mapstructure:"maxopenconns" json:"maxopenconns" ini:"maxopenconns"`
-	//默认Default库
+	//默认Default库 用户中心
 	Host     string `mapstructure:"host" json:"host" ini:"host"`
 	Port     string `mapstructure:"port" json:"port" ini:"port"`
 	Name     string `mapstructure:"name" json:"name" ini:"name"`
@@ -36,6 +36,12 @@ type Database struct {
 	NameSchema     string `mapstructure:"nameschema" json:"nameschema" ini:"nameschema"`
 	UsernameSchema string `mapstructure:"usernameschema" json:"usernameschema" ini:"usernameschema"`
 	PasswordSchema string `mapstructure:"passwordschema" json:"passwordschema" ini:"passwordschema"`
+	//IM库
+	HostIm     string `mapstructure:"hostim" json:"hostim" ini:"hostim"`
+	PortIm     string `mapstructure:"portim" json:"portim" ini:"portim"`
+	NameIm     string `mapstructure:"nameim" json:"nameim" ini:"nameim"`
+	UserNameIm string `mapstructure:"usernameim" json:"usernameim" ini:"usernameim"`
+	PasswordIm string `mapstructure:"passwordim" json:"passwordim" ini:"passwordim"`
 }
 
 type Redis struct {

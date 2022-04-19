@@ -6,7 +6,6 @@ import (
 	"api-skeleton/app/Model/ApiSkeleton"
 	"api-skeleton/app/Util"
 	"github.com/dgrijalva/jwt-go"
-	"gorm.io/gorm"
 	"strconv"
 	"time"
 )
@@ -14,15 +13,16 @@ import (
 func LoginLogic(form *ApiRequest.LoginForm) (string, error) {
 	//数据表查询用户不存在则创建用户
 	var userModel ApiSkeleton.User
-	err := Global.DB.
+	var count int64
+	Global.DB.
 		Where("tel = ? and password = ?", form.Username, Util.Md5Encryption(form.Password)).
-		Find(&userModel).Error
-	if err == gorm.ErrRecordNotFound {
+		Find(&userModel).Count(&count)
+	if count == 0 {
 		//数据不存在新增数据
 		userModel.Tel = form.Username
 		userModel.Username = form.Username
 		userModel.Password = Util.Md5Encryption(form.Password)
-		err = Global.DB.Create(&userModel).Error
+		err := Global.DB.Create(&userModel).Error
 		if err != nil {
 			return "", err
 		}

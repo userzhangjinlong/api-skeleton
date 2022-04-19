@@ -60,16 +60,24 @@ func (this *ConnectPool) InitConnectPool() (result bool) {
 		// SetMaxIdleConns 用于设置连接池中空闲连接的最大数量
 		// SetConnMaxLifetime 设置了连接可复用的最大时间
 		db.Use(
-			dbresolver.Register(dbresolver.Config{
-				Replicas: []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.DEFAULT_READ))}, //默认库 读写分离读库
-				// sources/replicas 负载均衡策略
-				Policy: dbresolver.RandomPolicy{},
-			}).Register(dbresolver.Config{
-				Sources:  []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.SCHEMA))},      //主库 读写分离写库
-				Replicas: []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.SCHEMA_READ))}, //从库 读写分离读库
-				// sources/replicas 负载均衡策略
-				Policy: dbresolver.RandomPolicy{},
-			}, ConstDir.SCHEMA).
+			dbresolver.
+				Register(dbresolver.Config{
+					Replicas: []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.DEFAULT_READ))}, //默认库 读写分离读库
+					// sources/replicas 负载均衡策略
+					Policy: dbresolver.RandomPolicy{},
+				}).
+				Register(dbresolver.Config{
+					Sources:  []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.SCHEMA))},      //主库 读写分离写库
+					Replicas: []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.SCHEMA_READ))}, //从库 读写分离读库
+					// sources/replicas 负载均衡策略
+					Policy: dbresolver.RandomPolicy{},
+				}, ConstDir.SCHEMA).
+				Register(dbresolver.Config{
+					Sources:  []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.IM))},      //主库 读写分离写库
+					Replicas: []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.IM_READ))}, //从库 读写分离读库
+					// sources/replicas 负载均衡策略
+					Policy: dbresolver.RandomPolicy{},
+				}, ConstDir.IM).
 				SetMaxIdleConns(MaxIdleConns).
 				SetMaxOpenConns(MaxOpenConns).
 				SetConnMaxLifetime(24 * time.Hour).
@@ -161,6 +169,18 @@ func getDbLibrary(library string) string {
 			configs.Database.HostSchema,
 			configs.Database.PortSchema,
 			configs.Database.NameSchema),
+		ConstDir.IM: fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+			configs.Database.UserNameIm,
+			configs.Database.PasswordIm,
+			configs.Database.HostIm,
+			configs.Database.PortIm,
+			configs.Database.NameIm),
+		ConstDir.IM_READ: fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+			configs.Database.UserNameIm,
+			configs.Database.PasswordIm,
+			configs.Database.HostIm,
+			configs.Database.PortIm,
+			configs.Database.NameIm),
 	}
 	source := sourceMap[library]
 

@@ -1,15 +1,8 @@
 package Api
 
 import (
-	"api-skeleton/app/Cache"
-	"api-skeleton/app/Ecode"
-	"api-skeleton/app/Global"
-	"api-skeleton/app/Model/ApiSkeleton"
 	"api-skeleton/app/Util"
-	ImMsgRpc "api-skeleton/grpc/Proto/imMsg"
-	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 )
 
 type Index struct {
@@ -28,25 +21,25 @@ func (i *Index) Index(ctx *gin.Context) {
 	//	Util.Error(ctx, 400, errString)
 	//	return
 	//}
-	var cache Cache.BaseRedis
-	val, _ := cache.Get("test")
+	//var cache Cache.BaseRedis
+	//val, _ := cache.Get("test")
 	//集群使用获取方式
 	//val := Global.RedisCluster.Get("test").Val()
 	//val, err1 := cache.Get("test")
 	//if err1 != nil {
 	//	fmt.Println(err1)
 	//}
-	traceId, _ := ctx.Get("X-Trace-ID")
-	spanId, _ := ctx.Get("X-Span-ID")
-	userinfo, _ := ctx.Get("User")
-	user := ApiSkeleton.User{}
-	Global.DB.Where("tel = ?", "18030769533").Find(&user)
-	logrus.WithFields(logrus.Fields{
-		"code":     200,
-		"data":     "success",
-		"trace_id": traceId,
-		"span_id":  spanId,
-	}).Info("测试日志写入12")
+	//traceId, _ := ctx.Get("X-Trace-ID")
+	//spanId, _ := ctx.Get("X-Span-ID")
+	//userinfo, _ := ctx.Get("User")
+	//user := ApiSkeleton.User{}
+	//Global.DB.Where("tel = ?", "18030769533").Find(&user)
+	//logrus.WithFields(logrus.Fields{
+	//	"code":     200,
+	//	"data":     "success",
+	//	"trace_id": traceId,
+	//	"span_id":  spanId,
+	//}).Info("测试日志写入12")
 	result := struct {
 		Val       string      `json:"vals"`
 		EtcdVal   string      `json:"etcdVals"`
@@ -55,9 +48,9 @@ func (i *Index) Index(ctx *gin.Context) {
 		Data      interface{} `json:"data"`
 	}{}
 
-	result.Val = val
-	result.LoginInfo = userinfo
-	result.User = user
+	//result.Val = val
+	//result.LoginInfo = userinfo
+	//result.User = user
 
 	//curl 客户端工具调试
 	//getAddress := "http://qa.wpt.la/mofei/japi/user/findUser?verifyStatus=individual_verify_pass&size=10&phone=true&scene=weertre"
@@ -101,13 +94,13 @@ func (i *Index) Index(ctx *gin.Context) {
 	//Util.SendRabbitMqMsg("testQueue", "testExchange", "这里是mq测试消息1")
 
 	//grpc inside调用
-	rpcClientConn, err := Util.GrpcClientConn()
-	defer rpcClientConn.Close()
-	if err != nil {
-		Util.Error(ctx,
-			Ecode.ServiceErrorCode.Code,
-			fmt.Sprintf("grpc 内部链接获取异常：%s", err))
-	}
+	//rpcClientConn, err := Util.GrpcClientConn()
+	//defer rpcClientConn.Close()
+	//if err != nil {
+	//	Util.Error(ctx,
+	//		Ecode.ServiceErrorCode.Code,
+	//		fmt.Sprintf("grpc 内部链接获取异常：%s", err))
+	//}
 
 	//用户服务调用
 	//userRpcClient := UserRpc.NewUserServiceClient(rpcClientConn)
@@ -120,14 +113,14 @@ func (i *Index) Index(ctx *gin.Context) {
 	//	return
 	//}
 	//im服务调用
-	ImMsgRpcClient := ImMsgRpc.NewImMsgServiceClient(rpcClientConn)
-	ImgMsgReq := ImMsgRpc.GetMsgRequest{FormUserId: 1, ToUserId: 2, PageSize: 20, PageNum: 1}
-	resIm, _ := ImMsgRpcClient.GetMsg(ctx, &ImgMsgReq)
-	fmt.Printf("返回的resIm,err:%v", resIm)
-	result.Data = resIm
-	//etcd调试
-	Util.SetEtcdConf("keyTest", "setEtcdTestVal")
-	valEtcd, _ := Util.GetEtcdConf("keyTest")
-	result.EtcdVal = valEtcd
+	//ImMsgRpcClient := ImMsgRpc.NewImMsgServiceClient(rpcClientConn)
+	//ImgMsgReq := ImMsgRpc.GetMsgRequest{FormUserId: 1, ToUserId: 2, PageSize: 20, PageNum: 1}
+	//resIm, _ := ImMsgRpcClient.GetMsg(ctx, &ImgMsgReq)
+	//fmt.Printf("返回的resIm,err:%v", resIm)
+	//result.Data = resIm
+	////etcd调试
+	//Util.SetEtcdConf("keyTest", "setEtcdTestVal")
+	//valEtcd, _ := Util.GetEtcdConf("keyTest")
+	//result.EtcdVal = valEtcd
 	Util.Success(ctx, result)
 }

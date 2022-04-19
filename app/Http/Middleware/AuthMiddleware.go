@@ -1,6 +1,7 @@
 package Middleware
 
 import (
+	"api-skeleton/app/ConstDir"
 	"api-skeleton/app/Ecode"
 	"api-skeleton/app/Util"
 	"fmt"
@@ -12,6 +13,7 @@ func Auth() gin.HandlerFunc {
 		token := getToken(ctx)
 		if token == "" {
 			Util.Error(ctx, Ecode.LoginUndefinedCode.Code, Ecode.LoginUndefinedCode.Message)
+			return
 		}
 
 		//token鉴权解析是否成功判断是否登陆成功或过期
@@ -21,7 +23,7 @@ func Auth() gin.HandlerFunc {
 			return
 		} else {
 			//设置保存用户信息
-			ctx.Set("User", userClaims)
+			ctx.Set(ConstDir.AUTH_USER, userClaims)
 		}
 
 		ctx.Next()
