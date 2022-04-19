@@ -52,10 +52,8 @@ func NewDatabaseTemplate() *DatabaseTemplate {
 //AssemblyColumns 格式化获取到的字段输出模板内容
 func (db *DatabaseTemplate) AssemblyColumns(tbColumns []*TableColumn) []*DatabaseColumn {
 	tplColumns := make([]*DatabaseColumn, 0, len(tbColumns))
-	fmt.Println("表中字段")
 	for _, column := range tbColumns {
-		fmt.Println(Util.InArray(column.ColumnName, []string{"createTime", "updateTime"}))
-		if !Util.InArray(column.ColumnName, []string{"createtime", "updatetime"}) {
+		if !Util.InArray(column.ColumnName, []string{"createTime", "updateTime"}) {
 			tag := fmt.Sprintf("`"+"gorm:"+"\"%s\""+" "+"json:"+"\"%s\""+"`", column.ColumnName, column.ColumnName)
 			tplColumns = append(tplColumns, &DatabaseColumn{
 				Name:    column.ColumnName,
