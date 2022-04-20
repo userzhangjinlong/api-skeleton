@@ -54,7 +54,7 @@ func (db *DatabaseTemplate) AssemblyColumns(tbColumns []*TableColumn) []*Databas
 	tplColumns := make([]*DatabaseColumn, 0, len(tbColumns))
 	for _, column := range tbColumns {
 		if !Util.InArray(column.ColumnName, []string{"createTime", "updateTime"}) {
-			tag := fmt.Sprintf("`"+"gorm:"+"\"%s\""+" "+"json:"+"\"%s\""+"`", column.ColumnName, column.ColumnName)
+			tag := fmt.Sprintf("`"+"gorm:"+"column:\"%s\""+" "+"json:"+"\"%s\""+"`", column.ColumnName, column.ColumnName)
 			tplColumns = append(tplColumns, &DatabaseColumn{
 				Name:    column.ColumnName,
 				Type:    DBTypeToStructType[column.DataType],

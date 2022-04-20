@@ -1,25 +1,20 @@
 package Api
 
 import (
-	"api-skeleton/app/ConstDir"
 	"api-skeleton/app/Ecode"
-	"api-skeleton/app/Global"
 	"api-skeleton/app/Http/Request"
+	"api-skeleton/app/Http/Request/ApiRequest"
+	"api-skeleton/app/Logic/ApiLogic"
 	"api-skeleton/app/Model/Im"
 	"api-skeleton/app/Util"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
-	"gorm.io/plugin/dbresolver"
+	"github.com/sirupsen/logrus"
 )
 
 type FriendApply struct {
-	Base *BaseController
-}
-
-type ApplyForm struct {
-	FriendUid int64  `form:"friendUid" binding:"required,min=0"`
-	Desc      string `form:"desc" binding:"required,max=200"`
+	Base             *BaseController
+	FriendApplyLogic *ApiLogic.FriendApplyLogic
 }
 
 var (
@@ -29,27 +24,20 @@ var (
 //ApplyFriend 发起好友申请
 func (fa *FriendApply) ApplyFriend(ctx *gin.Context) {
 	userInfo := fa.Base.UserInfo(ctx)
-	var applyForm ApplyForm
+	var applyForm ApiRequest.ApplyForm
 	valid, errs := Request.BindAndValid(ctx, &applyForm)
 	if !valid {
 		Util.Error(ctx, Ecode.ParamErrCode.Code, fmt.Sprintf("参数错误：%s", errs))
 		return
 	}
-
-	err := Global.DB.Clauses(dbresolver.Use(ConstDir.IM)).
-		Where("userId = ? and friendUserId = ?", userInfo.ID, &applyForm.FriendUid).
-		First(&FriendApplyModel).Error
-	if err != nil && err != gorm.ErrRecordNotFound {
-		Util.Error(ctx, Ecode.ServiceErrorCode.Code, fmt.Sprintf("数据查询异常：%s", err))
+	err := fa.FriendApplyLogic.ApplyFriend(applyForm, userInfo)
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"applyForm": applyForm,
+			"err":       err,
+		}).Error("好友申请失败")
+		Util.Error(ctx, Ecode.FailedCode.Code, "好友申请失败，请重试")
 		return
 	}
-
-	var returnVal interface{}
-	if FriendApplyModel.Id == 0 {
-		returnVal = []string{}
-	} else {
-		returnVal = FriendApplyModel
-	}
-
-	Util.Success(ctx, returnVal)
+	Util.Success(ctx, "success")
 }
