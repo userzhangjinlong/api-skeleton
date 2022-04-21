@@ -5,7 +5,6 @@ import (
 	"api-skeleton/app/Http/Request"
 	"api-skeleton/app/Http/Request/ApiRequest"
 	"api-skeleton/app/Logic/ApiLogic"
-	"api-skeleton/app/Model/Im"
 	"api-skeleton/app/Util"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -16,10 +15,6 @@ type FriendApply struct {
 	Base             *BaseController
 	FriendApplyLogic *ApiLogic.FriendApplyLogic
 }
-
-var (
-	FriendApplyModel *Im.FriendApply
-)
 
 //ApplyFriend 发起好友申请
 func (fa *FriendApply) ApplyFriend(ctx *gin.Context) {
@@ -40,4 +35,24 @@ func (fa *FriendApply) ApplyFriend(ctx *gin.Context) {
 		return
 	}
 	Util.Success(ctx, "success")
+}
+
+//DealFriendApply 处理好友申请
+func (fa *FriendApply) DealFriendApply(ctx *gin.Context) {
+	dealApplyForm := ApiRequest.DealApplyForm{}
+	valid, errs := Request.BindAndValid(ctx, &dealApplyForm)
+	if !valid {
+		Util.Error(ctx, Ecode.ParamErrCode.Code, fmt.Sprintf("参数错误：%s", errs))
+		return
+	}
+
+	err := fa.FriendApplyLogic.DealFriendApply(&dealApplyForm)
+
+	if err != nil {
+		Util.Error(ctx, Ecode.FailedCode.Code, "服务异常，请重试")
+		return
+	}
+
+	Util.Success(ctx, "success")
+
 }

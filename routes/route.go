@@ -36,8 +36,9 @@ func setWebRoute() map[string][]Route {
 	routes := map[string][]Route{
 		//鉴权路由
 		"api-login": {
-			{MethodGet, "/user/user-friend-list", UserFriendController.UserFriendList},
-			{MethodPost, "/user/friend-apply", FriendApplyController.ApplyFriend},
+			{MethodGet, "/user/user-friend-list", UserFriendController.UserFriendList},     //好友列表
+			{MethodPost, "/user/friend-apply", FriendApplyController.ApplyFriend},          //好友申请
+			{MethodPost, "/user/deal-friend-apply", FriendApplyController.DealFriendApply}, //处理好友申请
 		},
 		//不鉴权路由
 		"api-unLogin": {

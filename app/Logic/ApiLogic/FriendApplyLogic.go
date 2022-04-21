@@ -6,6 +6,7 @@ import (
 	"api-skeleton/app/Http/Request/ApiRequest"
 	"api-skeleton/app/Model/Im"
 	"api-skeleton/app/Util"
+	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"gorm.io/plugin/dbresolver"
 	"strconv"
@@ -19,6 +20,7 @@ var (
 	FriendApplyModel *Im.FriendApply
 )
 
+//ApplyFriend 好友申请
 func (fal *FriendApplyLogic) ApplyFriend(applyForm ApiRequest.ApplyForm, userInfo *Util.UserClaims) error {
 	err := Global.DB.Clauses(dbresolver.Use(ConstDir.IM)).
 		Where("userId = ? and friendUserId = ?", userInfo.ID, &applyForm.FriendUid).
@@ -37,5 +39,25 @@ func (fal *FriendApplyLogic) ApplyFriend(applyForm ApiRequest.ApplyForm, userInf
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+//DealFriendApply 处理申请请求
+func (fal *FriendApplyLogic) DealFriendApply(form *ApiRequest.DealApplyForm) error {
+	err := Global.DB.Clauses(dbresolver.Use(ConstDir.IM)).
+		Model(&Im.FriendApply{}).
+		Where("id = ?", form.ApplyId).
+		Update("status", form.Status).Error
+
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"applyForm": form,
+			"err":       err,
+		}).Error("处理请求失败")
+		return err
+	}
+
+	//同意好友申请向好友关系表写入好友关系记录 (事务)
+
 	return nil
 }

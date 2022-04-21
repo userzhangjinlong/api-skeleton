@@ -18,3 +18,9 @@ func (m *Model) BeforeCreate(tx *gorm.DB) error {
 
 	return nil
 }
+
+func (m *Model) BeforeUpdate(tx *gorm.DB) error {
+	m.UpdateTime = time.Now().Unix()
+
+	return nil
+}
