@@ -47,42 +47,13 @@ func (this *ConnectPool) GetInstance() *ConnectPool {
 func (this *ConnectPool) InitConnectPool() (result bool) {
 	switch dbType {
 	case "mysql":
-		//source := getDbLibrary(this.library)
-		db, errDb = gorm.Open(mysql.Open(getDbLibrary(ConstDir.DEFAULT)), &gorm.Config{})
+		source := getDbLibrary(this.library)
+		db, errDb = gorm.Open(mysql.Open(source), &gorm.Config{})
 		if errDb != nil {
 			log.Fatal(errDb.Error())
 			return false
 		}
-
-		//链接池配置、集群数据源链接配置
-		MaxIdleConns, _ := strconv.Atoi(configs.Database.MaxIdleConns)
-		MaxOpenConns, _ := strconv.Atoi(configs.Database.MaxOpenConns)
-		// SetMaxIdleConns 用于设置连接池中空闲连接的最大数量
-		// SetConnMaxLifetime 设置了连接可复用的最大时间
-		db.Use(
-			dbresolver.
-				Register(dbresolver.Config{
-					Replicas: []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.DEFAULT_READ))}, //默认库 读写分离读库
-					// sources/replicas 负载均衡策略
-					Policy: dbresolver.RandomPolicy{},
-				}).
-				Register(dbresolver.Config{
-					Sources:  []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.SCHEMA))},      //主库 读写分离写库
-					Replicas: []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.SCHEMA_READ))}, //从库 读写分离读库
-					// sources/replicas 负载均衡策略
-					Policy: dbresolver.RandomPolicy{},
-				}, ConstDir.SCHEMA).
-				Register(dbresolver.Config{
-					Sources:  []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.IM))},      //主库 读写分离写库
-					Replicas: []gorm.Dialector{mysql.Open(getDbLibrary(ConstDir.IM_READ))}, //从库 读写分离读库
-					// sources/replicas 负载均衡策略
-					Policy: dbresolver.RandomPolicy{},
-				}, ConstDir.IM).
-				SetMaxIdleConns(MaxIdleConns).
-				SetMaxOpenConns(MaxOpenConns).
-				SetConnMaxLifetime(24 * time.Hour).
-				SetConnMaxIdleTime(time.Hour),
-		)
+		registerDbConfig(db, this.library)
 	case "redis":
 		redisDb, _ := strconv.Atoi(configs.Redis.Db)
 		pool = redis.NewClient(&redis.Options{
@@ -138,11 +109,14 @@ func (this *ConnectPool) GetConnectLibrary() (res interface{}, err error) {
 
 func NewConnect(connect string, library string) *ConnectPool {
 	dbType = connect
-	return &ConnectPool{
+	instance = &ConnectPool{
 		library: library,
 	}
+
+	return instance
 }
 
+//getDbLibrary 获取db dsn
 func getDbLibrary(library string) string {
 	sourceMap := map[string]string{
 		ConstDir.DEFAULT: fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
@@ -175,6 +149,7 @@ func getDbLibrary(library string) string {
 			configs.Database.HostIm,
 			configs.Database.PortIm,
 			configs.Database.NameIm),
+
 		ConstDir.IM_READ: fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
 			configs.Database.UserNameIm,
 			configs.Database.PasswordIm,
@@ -187,4 +162,29 @@ func getDbLibrary(library string) string {
 	source += "?charset=" + configs.Database.Charset +
 		"&parseTime=True&loc=Local&timeout=5000ms"
 	return source
+}
+
+func registerDbConfig(registerDb *gorm.DB, library string) {
+	//链接池配置、集群数据源链接配置
+	MaxIdleConns, _ := strconv.Atoi(configs.Database.MaxIdleConns)
+	MaxOpenConns, _ := strconv.Atoi(configs.Database.MaxOpenConns)
+	// SetMaxIdleConns 用于设置连接池中空闲连接的最大数量
+	// SetConnMaxLifetime 设置了连接可复用的最大时间
+	dbStringSn := make(map[string]string, 10)
+	dbStringSn[ConstDir.IM] = ConstDir.IM_READ
+	dbStringSn[ConstDir.DEFAULT] = ConstDir.DEFAULT_READ
+	dbStringSn[ConstDir.SCHEMA] = ConstDir.SCHEMA_READ
+	//todo::目前这里读写分离存在问题了 待查看如何处理
+	registerDb.Use(
+		dbresolver.
+			Register(dbresolver.Config{
+				Replicas: []gorm.Dialector{mysql.Open(getDbLibrary(dbStringSn[library]))}, //默认库 读写分离读库
+				// sources/replicas 负载均衡策略
+				Policy: dbresolver.RandomPolicy{},
+			}).
+			SetMaxIdleConns(MaxIdleConns).
+			SetMaxOpenConns(MaxOpenConns).
+			SetConnMaxLifetime(24 * time.Hour).
+			SetConnMaxIdleTime(time.Hour),
+	)
 }

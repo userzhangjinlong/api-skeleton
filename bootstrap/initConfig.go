@@ -18,9 +18,19 @@ func InitConfig() {
 func InitDB() {
 	db, err := ConnectPoolFactory.GetMysql(ConstDir.DEFAULT)
 	if err != nil {
-		panic("db链接获取异常")
+		panic("默认db链接获取异常")
+	}
+	imDB, err := ConnectPoolFactory.GetMysql(ConstDir.IM)
+	if err != nil {
+		panic("IMdb链接获取异常")
+	}
+	schemaDB, err := ConnectPoolFactory.GetMysql(ConstDir.SCHEMA)
+	if err != nil {
+		panic("IMdb链接获取异常")
 	}
 	Global.DB = db
+	Global.ImDB = imDB
+	Global.SchemaDB = schemaDB
 }
 
 //InitRedisClient 初始化redis

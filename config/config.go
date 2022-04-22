@@ -42,6 +42,12 @@ type Database struct {
 	NameIm     string `mapstructure:"nameim" json:"nameim" ini:"nameim"`
 	UserNameIm string `mapstructure:"usernameim" json:"usernameim" ini:"usernameim"`
 	PasswordIm string `mapstructure:"passwordim" json:"passwordim" ini:"passwordim"`
+	//IM读库
+	HostImRead     string `mapstructure:"hostimread" json:"hostimread" ini:"hostimread"`
+	PortImRead     string `mapstructure:"portimread" json:"portimread" ini:"portimread"`
+	NameImRead     string `mapstructure:"nameimread" json:"nameimread" ini:"nameimread"`
+	UserNameImRead string `mapstructure:"usernameimread" json:"usernameimread" ini:"usernameimread"`
+	PasswordImRead string `mapstructure:"passwordimread" json:"passwordimread" ini:"passwordimread"`
 }
 
 type Redis struct {

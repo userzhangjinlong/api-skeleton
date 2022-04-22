@@ -6,7 +6,7 @@ import (
 
 //NewMysql sql工厂加载mysql连接池
 func NewMysql(library string) (resule bool) {
-	connectErr := NewConnect("mysql", library).GetInstance().InitConnectPool()
+	connectErr := NewConnect("mysql", library).InitConnectPool()
 
 	return connectErr
 }
@@ -18,7 +18,7 @@ func GetMysql(library string) (dbPool *gorm.DB, err error) {
 		panic("mysql连接池获取失败")
 	}
 
-	connect, errConnect := NewConnect("mysql", library).GetInstance().GetConnectLibrary()
+	connect, errConnect := NewConnect("mysql", library).GetConnectLibrary()
 
 	return connect.(*gorm.DB), errConnect
 }

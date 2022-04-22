@@ -2,6 +2,12 @@ package Im
 
 import "api-skeleton/app/Model"
 
+const (
+	READY_STATUS = iota
+	PASS_STATUS
+	REFUSE_STATUS
+)
+
 type FriendApply struct {
 
 	//用户编号

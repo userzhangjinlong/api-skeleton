@@ -1,9 +1,7 @@
 package MysqlCommand
 
 import (
-	"api-skeleton/app/ConstDir"
 	"api-skeleton/app/Global"
-	"gorm.io/plugin/dbresolver"
 )
 
 type DBModel struct {
@@ -41,8 +39,9 @@ func (m *DBModel) GetColumns(tableSchema string, tableName string) []*TableColum
 	query := "SELECT COLUMN_NAME, DATA_TYPE, COLUMN_KEY, IS_NULLABLE, COLUMN_TYPE, COLUMN_COMMENT " +
 		"FROM COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?"
 
-	//todo::已知目前集群链接使用方式；文档DBResolver 会根据工作表、struct 自动切换连接暂未生效会直接链接到默认库发现待处理
-	err := Global.DB.Clauses(dbresolver.Use(ConstDir.SCHEMA)).
+	//todo::已知目前集群链接使用方式；文档DBResolver 会根据工作表、struct
+	//自动切换连接暂未生效会直接链接到默认库发现待处理,又发现集群事务无法支持所以修改为分结构体支持链接
+	err := Global.SchemaDB.
 		Raw(query, tableSchema, tableName).Scan(&results).Error
 	//存在异常报错默认库下的columns表不存在
 	//err := Global.DB.
