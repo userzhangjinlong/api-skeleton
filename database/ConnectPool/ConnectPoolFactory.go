@@ -6,7 +6,6 @@ import (
 	"github.com/go-redis/redis"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/plugin/dbresolver"
 	"log"
 	"strconv"
 	"sync"
@@ -48,12 +47,21 @@ func (this *ConnectPool) InitConnectPool() (result bool) {
 	switch dbType {
 	case "mysql":
 		source := getDbLibrary(this.library)
-		db, errDb = gorm.Open(mysql.Open(source), &gorm.Config{})
+		db, errDb = gorm.Open(
+			mysql.Open(source), &gorm.Config{})
 		if errDb != nil {
 			log.Fatal(errDb.Error())
 			return false
 		}
-		registerDbConfig(db, this.library)
+		//todo::读写分离目前看只能新定义读结构体链接，多读链接如何处理后期学习优化
+		//链接池配置、集群数据源链接配置
+		MaxIdleConns, _ := strconv.Atoi(configs.Database.MaxIdleConns)
+		MaxOpenConns, _ := strconv.Atoi(configs.Database.MaxOpenConns)
+		//增加sql配置
+		sqlDB, _ := db.DB()
+		sqlDB.SetMaxOpenConns(MaxOpenConns)
+		// 设置最大空闲数
+		sqlDB.SetMaxIdleConns(MaxIdleConns)
 	case "redis":
 		redisDb, _ := strconv.Atoi(configs.Redis.Db)
 		pool = redis.NewClient(&redis.Options{
@@ -151,40 +159,15 @@ func getDbLibrary(library string) string {
 			configs.Database.NameIm),
 
 		ConstDir.IM_READ: fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
-			configs.Database.UserNameIm,
-			configs.Database.PasswordIm,
-			configs.Database.HostIm,
-			configs.Database.PortIm,
-			configs.Database.NameIm),
+			configs.Database.UserNameImRead,
+			configs.Database.PasswordImRead,
+			configs.Database.HostImRead,
+			configs.Database.PortImRead,
+			configs.Database.NameImRead),
 	}
 	source := sourceMap[library]
 
 	source += "?charset=" + configs.Database.Charset +
 		"&parseTime=True&loc=Local&timeout=5000ms"
 	return source
-}
-
-func registerDbConfig(registerDb *gorm.DB, library string) {
-	//链接池配置、集群数据源链接配置
-	MaxIdleConns, _ := strconv.Atoi(configs.Database.MaxIdleConns)
-	MaxOpenConns, _ := strconv.Atoi(configs.Database.MaxOpenConns)
-	// SetMaxIdleConns 用于设置连接池中空闲连接的最大数量
-	// SetConnMaxLifetime 设置了连接可复用的最大时间
-	dbStringSn := make(map[string]string, 10)
-	dbStringSn[ConstDir.IM] = ConstDir.IM_READ
-	dbStringSn[ConstDir.DEFAULT] = ConstDir.DEFAULT_READ
-	dbStringSn[ConstDir.SCHEMA] = ConstDir.SCHEMA_READ
-	//todo::目前这里读写分离存在问题了 待查看如何处理
-	registerDb.Use(
-		dbresolver.
-			Register(dbresolver.Config{
-				Replicas: []gorm.Dialector{mysql.Open(getDbLibrary(dbStringSn[library]))}, //默认库 读写分离读库
-				// sources/replicas 负载均衡策略
-				Policy: dbresolver.RandomPolicy{},
-			}).
-			SetMaxIdleConns(MaxIdleConns).
-			SetMaxOpenConns(MaxOpenConns).
-			SetConnMaxLifetime(24 * time.Hour).
-			SetConnMaxIdleTime(time.Hour),
-	)
 }

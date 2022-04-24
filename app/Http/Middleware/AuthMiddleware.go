@@ -3,6 +3,7 @@ package Middleware
 import (
 	"api-skeleton/app/ConstDir"
 	"api-skeleton/app/Ecode"
+	"api-skeleton/app/Model/ApiSkeleton"
 	"api-skeleton/app/Util"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -23,6 +24,7 @@ func Auth() gin.HandlerFunc {
 			return
 		} else {
 			//设置保存用户信息
+			ApiSkeleton.UserInfo = userClaims
 			ctx.Set(ConstDir.AUTH_USER, userClaims)
 		}
 

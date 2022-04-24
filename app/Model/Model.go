@@ -24,3 +24,11 @@ func (m *Model) BeforeUpdate(tx *gorm.DB) error {
 
 	return nil
 }
+
+//Paginate 自定义分页
+func (m *Model) Paginate(page int, pageSize int) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		offset := (page - 1) * pageSize
+		return db.Offset(offset).Limit(pageSize)
+	}
+}

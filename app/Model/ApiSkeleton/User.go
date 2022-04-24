@@ -1,6 +1,9 @@
 package ApiSkeleton
 
-import "api-skeleton/app/Model"
+import (
+	"api-skeleton/app/Model"
+	"api-skeleton/app/Util"
+)
 
 type User struct {
 
@@ -25,12 +28,14 @@ type User struct {
 	//地址
 	Addr string `gorm:"column:addr" json:"addr"`
 
-	//身份证号
-	Card string `gorm:"column:card" json:"card"`
+	//自定义头像
+	Avatar string `gorm:"column:avatar" json:"avatar"`
 
 	//继承父类model
 	Model.Model
 }
+
+var UserInfo *Util.UserClaims
 
 func (model *User) TableName() string {
 	return "user"

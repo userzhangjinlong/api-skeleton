@@ -18,7 +18,7 @@ type FriendApply struct {
 
 //ApplyFriend 发起好友申请
 func (fa *FriendApply) ApplyFriend(ctx *gin.Context) {
-	userInfo := fa.Base.UserInfo(ctx)
+	userInfo := fa.Base.UserInfo()
 	var applyForm ApiRequest.ApplyForm
 	valid, errs := Request.BindAndValid(ctx, &applyForm)
 	if !valid {
