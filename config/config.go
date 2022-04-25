@@ -6,6 +6,7 @@ type System struct {
 	Redis        Redis        `json:"redis" ini:"redis"`
 	Log          Log          `json:"log" ini:"log"`
 	Proxy        Proxy        `json:"proxy" ini:"proxy"`
+	WebSocket    WebSocket    `json:"web-socket" int:"web-socket"`
 	Trace        Trace        `json:"trace" ini:"trace"`
 	Jwt          Jwt          `json:"jwt" ini:"jwt"`
 	RedisCluster RedisCluster `json:"redis-cluster" ini:"redis-cluster"`
@@ -76,4 +77,9 @@ type Log struct {
 type Proxy struct {
 	Port       string `mapstructure:"port" json:"port" ini:"port"`
 	TrustProxy string `mapstructure:"trustProxy" json:"trustProxy" ini:"trustProxy"`
+}
+
+type WebSocket struct {
+	Port string `mapstructure:"port" json:"port" ini:"port"`
+	Host string `mapstructure:"host" json:"host" ini:"host"`
 }

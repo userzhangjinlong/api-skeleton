@@ -16,7 +16,6 @@ func RegisterRoutes(router *gin.Engine) *gin.Engine {
 	for group, routes := range webRoute {
 		//字符串分割
 		groupAndAuth := strings.Split(group, "-")
-
 		var routeGroup *gin.RouterGroup
 		if groupAndAuth[1] == "login" {
 			routeGroup = router.Group(groupAndAuth[0])

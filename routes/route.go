@@ -2,6 +2,7 @@ package Route
 
 import (
 	"api-skeleton/app/Http/Controller/Api"
+	"api-skeleton/app/Http/Controller/Im"
 )
 
 const (
@@ -28,9 +29,10 @@ var (
 	LoginController       Api.Login
 	UserFriendController  Api.UserFriend
 	FriendApplyController Api.FriendApply
+	WsServerController    Im.WsServer
 )
 
-//setWebRoute 路由地址
+//setWebRoute web路由地址
 func setWebRoute() map[string][]Route {
 	//这里写入所有对应的路由插入
 	routes := map[string][]Route{
@@ -44,6 +46,10 @@ func setWebRoute() map[string][]Route {
 		"api-unLogin": {
 			{MethodPost, "/login", LoginController.Login},
 			{MethodGet, "/index", IndexController.Index},
+		},
+
+		"ws-unLogin": {
+			{MethodGet, "/connect", WsServerController.Start},
 		},
 	}
 
