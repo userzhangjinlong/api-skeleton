@@ -10,7 +10,16 @@ import (
 	"time"
 )
 
-func LoginLogic(form *ApiRequest.LoginForm) (string, error) {
+type LoginData struct {
+	Token      string `json:"token"`
+	UserId     int    `json:"userId"`
+	Username   string `json:"username"`
+	Tel        string `json:"tel"`
+	Avatar     string `json:"avatar"`
+	CreateTime int64  `json:"createTime"`
+}
+
+func LoginLogic(form *ApiRequest.LoginForm) (*LoginData, error) {
 	//数据表查询用户不存在则创建用户
 	var userModel ApiSkeleton.User
 	var count int64
@@ -24,7 +33,7 @@ func LoginLogic(form *ApiRequest.LoginForm) (string, error) {
 		userModel.Password = Util.Md5Encryption(form.Password)
 		err := Global.DB.Create(&userModel).Error
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 	}
 	expireTime, _ := time.ParseDuration(Global.Configs.Jwt.Expire)
@@ -41,6 +50,13 @@ func LoginLogic(form *ApiRequest.LoginForm) (string, error) {
 		},
 	}
 	token, _ := Util.CreateToken(&userClaims)
-
-	return token, nil
+	LoginData := LoginData{
+		Token:      token,
+		UserId:     userModel.Id,
+		Username:   userModel.Username,
+		Tel:        userModel.Tel,
+		Avatar:     userModel.Avatar,
+		CreateTime: userModel.CreateTime,
+	}
+	return &LoginData, nil
 }

@@ -36,5 +36,14 @@ func (ufl *UserFriendLogic) GetUserFriendList(userinfoId int, page int, pageSize
 		Scopes(userModel.Paginate(page, pageSize)).
 		Where("id in ?", userFriendIds).
 		Find(&UserFriendJson).Error
+	if err != nil {
+		return nil, err
+	}
+
+	for k, v := range UserFriendJson {
+		if v.Avatar == "" {
+			UserFriendJson[k].Avatar = "https://cdn.learnku.com//uploads/communities/sNljssWWQoW6J88O9G37.png!/both/44x44"
+		}
+	}
 	return UserFriendJson, nil
 }
