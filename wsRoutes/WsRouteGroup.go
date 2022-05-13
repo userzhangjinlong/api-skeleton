@@ -8,7 +8,7 @@ import (
 )
 
 //ws路由回调执行方法
-type HandlerFunc func(req *grateway.WsMsgReq)
+type HandlerFunc func(req *grateway.WsMsgReq, rsp *grateway.WsMsgRsp)
 type MiddlewareFunc func(req *grateway.WsMsgReq) HandlerFunc
 type HandlersChain []HandlerFunc
 type MiddlewareHandlersChain []MiddlewareFunc
@@ -50,11 +50,11 @@ func (wg *WsGroup) AddRoute(path string, handler HandlerFunc) {
 }
 
 //Exec 执行响应的回调路由
-func (wg *WsGroup) Exec(path string, req *grateway.WsMsgReq) {
+func (wg *WsGroup) Exec(path string, req *grateway.WsMsgReq, rsp *grateway.WsMsgRsp) {
 	routePath := wg.getWsRoutePath(path)
 	if handler, ok := wg.RouteHandlers[routePath]; ok {
 		//正常运行handler方法
-		handler(req)
+		handler(req, rsp)
 	} else {
 		//抛异常路由不存在
 		panic(fmt.Sprintf("%s:方法不存在", routePath))

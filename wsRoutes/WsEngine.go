@@ -20,7 +20,7 @@ func NewWsEngine() *WsEngine {
 	return engine
 }
 
-func (we *WsEngine) Run(path string, req *grateway.WsMsgReq) {
+func (we *WsEngine) Run(path string, req *grateway.WsMsgReq, rsp *grateway.WsMsgRsp) {
 	//对应
-	we.WsGroup.Exec(path, req)
+	we.WsGroup.Exec(path, req, rsp)
 }

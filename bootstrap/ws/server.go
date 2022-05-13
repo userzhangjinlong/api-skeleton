@@ -1,7 +1,6 @@
 package ws
 
 import (
-	"api-skeleton/app/Ecode"
 	"api-skeleton/app/Util"
 	"api-skeleton/grateway"
 	"api-skeleton/wsRoutes"
@@ -65,15 +64,7 @@ func (ws *wsServer) RemoveProperty(key string) {
 }
 
 //Push 压进消息给服务端接收处理
-func (ws *wsServer) Push(data interface{}) {
-
-	response := &grateway.WsMsgRsp{
-		Body: &grateway.RspBody{
-			Code: Ecode.ResponseOkCode.Code,
-			Msg:  Ecode.ResponseOkCode.Message,
-			Data: data,
-		},
-	}
+func (ws *wsServer) Push(response *grateway.WsMsgRsp) {
 	ws.rspMsg <- response
 }
 
@@ -86,6 +77,22 @@ func (ws *wsServer) Start() {
 //Read 读取客户端发送过来的ws数据
 func (ws *wsServer) Read() {
 	for {
+		reqData := &grateway.WsMsgReq{
+			Body: &grateway.ReqBody{},
+		}
+		rspData := &grateway.WsMsgRsp{
+			Body: &grateway.RspBody{},
+		}
+		//读取read消息异常捕获抛出
+		//todo:: 捕获异常正常抛出之后 之后的消息不会再有响应待处理
+		//defer func() {
+		//	if err := recover(); err != nil {
+		//		rspData.Body.Code = 500
+		//		rspData.Body.Msg = "socket服务异常"
+		//		rspData.Body.Data = nil
+		//		go ws.Push(rspData)
+		//	}
+		//}()
 		//读取ws中的数据
 		_, message, err := ws.coon.ReadMessage()
 		fmt.Printf("读取到的数据message:%v", string(message))
@@ -95,16 +102,22 @@ func (ws *wsServer) Read() {
 				"err": err,
 			}).Error("读取ws消息异常")
 		}
-		reqData := new(grateway.WsMsgReq)
+
 		//todo::解析读取到的json消息并且执行对应路由返回响应
 		err = json.Unmarshal(message, &reqData.Body)
 		if err != nil {
 			//返回响应请求的数据格式错误
-			panic(err)
+			//panic(err)
+			rspData.Body.Code = 500
+			rspData.Body.Msg = "socket服务异常"
+			rspData.Body.Data = nil
 		}
 
-		ws.router.Run(reqData.Body.Path, reqData)
-		ws.Push(reqData.Body.Path)
+		if rspData != nil && rspData.Body.Code != 500 {
+			ws.router.Run(reqData.Body.Path, reqData, rspData)
+		}
+		ws.Push(rspData)
+
 	}
 }
 
@@ -116,10 +129,12 @@ func (ws *wsServer) Write() {
 		//响应给客户端ws数据
 		data, err := json.Marshal(message.Body)
 		if err != nil {
+			fmt.Println("data json解析异常")
 			log.Println(err)
 		}
-		err = ws.coon.WriteMessage(websocket.BinaryMessage, data)
+		err = ws.coon.WriteMessage(websocket.TextMessage, data)
 		if err != nil {
+			fmt.Println("写入ws消息异常")
 			logrus.WithFields(logrus.Fields{
 				"msg": message,
 				"err": err,
@@ -145,11 +160,16 @@ func (ws *wsServer) HandShake() {
 	}
 
 	//封装请求 响应握手秘钥
-	req := grateway.WsMsgReq{
-		Body: &grateway.ReqBody{
-			Path: secretKey,
-			Data: "ws.handShake",
+	//req := grateway.WsMsgReq{
+	//	Body: &grateway.ReqBody{
+	//		Path: secretKey,
+	//		Data: "ws.handShake",
+	//	},
+	//}
+	rspData := &grateway.WsMsgRsp{
+		Body: &grateway.RspBody{
+			200, "success", "握手呀",
 		},
 	}
-	ws.Push(req)
+	ws.Push(rspData)
 }
