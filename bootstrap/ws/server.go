@@ -101,6 +101,9 @@ func (ws *wsServer) Read() {
 				"msg": message,
 				"err": err,
 			}).Error("读取ws消息异常")
+			//服务端读取不到ws链接时关闭
+			ws.coon.Close()
+			return
 		}
 
 		//todo::解析读取到的json消息并且执行对应路由返回响应
@@ -125,7 +128,7 @@ func (ws *wsServer) Read() {
 func (ws *wsServer) Write() {
 	for {
 		message := <-ws.rspMsg
-		fmt.Printf("写入的ws数据:%v", message.Body.Data)
+		fmt.Printf("写入的ws数据:%v", message.Body)
 		//响应给客户端ws数据
 		data, err := json.Marshal(message.Body)
 		if err != nil {
@@ -139,6 +142,8 @@ func (ws *wsServer) Write() {
 				"msg": message,
 				"err": err,
 			}).Error("写入ws消息异常")
+			//写入消息异常关闭
+			ws.coon.Close()
 		}
 	}
 }
@@ -151,7 +156,8 @@ func (ws *wsServer) Router(router *wsRoutes.WsEngine) {
 //HandShake ws握手响应秘钥给客户端
 func (ws *wsServer) HandShake() {
 	secretKey := ""
-	val, err := ws.GetProperty(secretKey)
+	val, err := ws.GetProperty("secret")
+	fmt.Printf("获取出属性secret：%s", val)
 	if err != nil {
 		//设置secretKey
 		secretKey = Util.RandSeeks(16)
@@ -159,17 +165,12 @@ func (ws *wsServer) HandShake() {
 		secretKey = val.(string)
 	}
 
-	//封装请求 响应握手秘钥
-	//req := grateway.WsMsgReq{
-	//	Body: &grateway.ReqBody{
-	//		Path: secretKey,
-	//		Data: "ws.handShake",
-	//	},
-	//}
+	//封装请求 响应握手秘钥 ws握手成功 链接通道建立
 	rspData := &grateway.WsMsgRsp{
 		Body: &grateway.RspBody{
-			200, "success", "握手呀",
+			200, "success", secretKey,
 		},
 	}
+	ws.SetProperty("secret", secretKey)
 	ws.Push(rspData)
 }

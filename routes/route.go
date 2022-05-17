@@ -40,6 +40,7 @@ func setWebRoute() map[string][]Route {
 			{MethodGet, "/user/user-friend-list", UserFriendController.UserFriendList},     //好友列表
 			{MethodPost, "/user/friend-apply", FriendApplyController.ApplyFriend},          //好友申请
 			{MethodPost, "/user/deal-friend-apply", FriendApplyController.DealFriendApply}, //处理好友申请
+			{MethodGet, "/user/get-history-msg", UserFriendController.GetHistoryMessage},   //获取聊天历史记录
 		},
 		//不鉴权路由
 		"api-unLogin": {

@@ -19,6 +19,6 @@ type RspBody struct {
 
 //ReqBody ws请求body体
 type ReqBody struct {
-	Path string `json:"path"` //路由key
-	Data string `json:"data"` //请求的消息json数据
+	Path string      `json:"path"` //路由key
+	Data interface{} `json:"data"` //请求的消息json数据
 }

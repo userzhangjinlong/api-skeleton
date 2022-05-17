@@ -51,6 +51,7 @@ func (wg *WsGroup) AddRoute(path string, handler HandlerFunc) {
 
 //Exec 执行响应的回调路由
 func (wg *WsGroup) Exec(path string, req *grateway.WsMsgReq, rsp *grateway.WsMsgRsp) {
+	//todo::执行正常方法之前先执行中间件
 	routePath := wg.getWsRoutePath(path)
 	if handler, ok := wg.RouteHandlers[routePath]; ok {
 		//正常运行handler方法
