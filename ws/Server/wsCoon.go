@@ -1,16 +1,5 @@
 package ws
 
-//WsMsgReq ws请求body统一结构封装
-type WsMsgReq struct {
-	Body   *ReqBody
-	wsCoon WsCoon
-}
-
-//WsMsgRsp ws请求外部统一透出响应体
-type WsMsgRsp struct {
-	Body *RspBody
-}
-
 //RspBody ws请求响应body体
 type RspBody struct {
 	Code int         `json:"code"`

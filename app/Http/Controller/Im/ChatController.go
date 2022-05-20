@@ -5,6 +5,7 @@ import (
 	"api-skeleton/app/Logic/Ws"
 	"api-skeleton/app/Model/Im"
 	"api-skeleton/grateway"
+	"api-skeleton/ws/Client"
 	"fmt"
 )
 
@@ -36,5 +37,9 @@ func (c *ChatController) ToChat(req *grateway.WsMsgReq, rsp *grateway.WsMsgRsp) 
 	rsp.Body.Code = Ecode.ResponseOkCode.Code
 	rsp.Body.Msg = Ecode.ResponseOkCode.Message
 	rsp.Body.Data = ImMsgModel
+
+	//发送消息给到toUserId的用户
+	Client.SendMsg(int(ImMsgModel.ToUserId), rsp)
+
 	return
 }

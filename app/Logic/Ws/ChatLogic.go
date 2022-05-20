@@ -3,8 +3,8 @@ package Ws
 import (
 	"api-skeleton/app/Global"
 	"api-skeleton/app/Model/Im"
+	"api-skeleton/app/Util"
 	"api-skeleton/grateway"
-	"fmt"
 	"strconv"
 	"time"
 )
@@ -18,18 +18,19 @@ type ChatResData struct {
 
 func (cl *ChatLogic) ToChat(req *grateway.WsMsgReq) (error, Im.ImMsg) {
 	requestData := req.Body.Data.(map[string]interface{})
-	fmt.Println("请求的数据", requestData)
 	toUserId, _ := strconv.Atoi(requestData["toUserId"].(string))
+	userInfo, err := Util.ParseToken(requestData["token"].(string))
+	chatId, _ := strconv.Atoi(userInfo.ID)
 
 	nowTime := time.Now().Unix()
 	ImMsgData := Im.ImMsg{
 		ToUserId:   int64(toUserId),
-		FromUserId: 1,
+		FromUserId: int64(chatId),
 		Content:    requestData["msg"].(string),
 		SendTime:   nowTime,
 	}
 
-	err := Global.ImDB.Create(&ImMsgData).Error
+	err = Global.ImDB.Create(&ImMsgData).Error
 	if err != nil {
 		return err, ImMsgData
 	}
