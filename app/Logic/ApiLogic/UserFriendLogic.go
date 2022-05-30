@@ -4,6 +4,7 @@ import (
 	"api-skeleton/app/Global"
 	"api-skeleton/app/Model/ApiSkeleton"
 	"api-skeleton/app/Model/Im"
+	"sort"
 )
 
 type UserFriendLogic struct {
@@ -73,7 +74,7 @@ func (ufl *UserFriendLogic) GetUserFriendList(userinfoId int, page int, pageSize
 func (ufl *UserFriendLogic) GetHistoryMsgList(fromUserId, toUserId, page, pageSize int) (HistoryMsgResponse, error) {
 
 	HistoryMsgList := HistoryMsgResponse{
-		MsgList:    make([]HistoryMsgJson, 0),
+		MsgList:    []HistoryMsgJson{},
 		ToUserInfo: UserFriendJson{},
 	}
 
@@ -83,12 +84,17 @@ func (ufl *UserFriendLogic) GetHistoryMsgList(fromUserId, toUserId, page, pageSi
 	err := Global.ImDB.Model(imMsgMode).
 		Scopes(imMsgMode.Paginate(page, pageSize)).
 		Where("fromUserId = ? or toUserId = ?", fromUserId, fromUserId).
+		Order("id DESC").
 		Find(&HistoryMsgList.MsgList).Error
 
 	if err != nil {
 		return HistoryMsgList, err
 	}
 
+	//查询到的聊天数据顺序反转
+	sort.Slice(HistoryMsgList.MsgList, func(i, j int) bool {
+		return HistoryMsgList.MsgList[i].SendTime < HistoryMsgList.MsgList[j].SendTime
+	})
 	//获取指定用户信息
 	whereUser := map[string]interface{}{
 		"id": toUserId,
